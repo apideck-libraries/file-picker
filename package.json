@@ -26,7 +26,8 @@
     "react-dom": ">=16"
   },
   "dependencies": {
-    "@headlessui/react": "^1.4.1"
+    "@headlessui/react": "^1.4.1",
+    "swr": "^1.0.0"
   },
   "husky": {
     "hooks": {

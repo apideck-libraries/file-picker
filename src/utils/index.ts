@@ -1,0 +1,1 @@
+export { isAuthorized } from './isAuthorized'
