@@ -1,0 +1,24 @@
+import React, { FC, HTMLAttributes, useState } from 'react'
+
+import { Modal } from './Modal'
+
+export interface Props extends HTMLAttributes<HTMLDivElement> {
+  /** The JSON Web Token returned from the Session call */
+  jwt: string
+}
+
+/**
+ * The Apideck File Picker
+ */
+export const FilePicker: FC<Props> = ({ jwt }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)}>Pick file</button>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        {jwt}
+      </Modal>
+      {isOpen ? 'isOpen' : 'na'}
+    </div>
+  )
+}
