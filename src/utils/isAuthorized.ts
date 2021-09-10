@@ -1,4 +1,4 @@
-import { Connection } from 'types/Connection'
+import { Connection } from '../types/Connection'
 
 const formFieldsConfigured = (connection: Connection): boolean => {
   const { form_fields: formFields } = connection
