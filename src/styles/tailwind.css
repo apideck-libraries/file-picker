@@ -11,4 +11,8 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .max-w-2xs {
+    max-width: 16rem;
+  }
 }

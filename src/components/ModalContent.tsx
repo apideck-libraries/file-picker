@@ -1,9 +1,9 @@
 import React, { FC, HTMLAttributes, useEffect, useState } from 'react'
-import useSWR from 'swr'
-import { Connection } from '../types/Connection'
-import Files from './Files'
-import SelectConnection from './SelectConnection'
 
+import { Connection } from '../types/Connection'
+import FilesContainer from './FilesContainer'
+import SelectConnection from './SelectConnection'
+import useSWR from 'swr'
 
 export interface Props extends HTMLAttributes<HTMLDivElement> {
   /** The JSON Web Token returned from the Session call */
@@ -34,6 +34,7 @@ export const ModalContent: FC<Props> = ({ jwt }) => {
     getConnections
   )
   const isLoading = !connections && !error
+  const hasError = connections?.error || error
   const callableConnections = connections?.data?.filter(
     (connection: Connection) =>
       connection.state === 'callable' && connection.unified_api === 'file-storage'
@@ -52,9 +53,13 @@ export const ModalContent: FC<Props> = ({ jwt }) => {
         <div>
           <h3 className="text-lg font-medium leading-6 text-gray-900">Apideck Filepicker</h3>
           <p className="max-w-2xl mt-1 text-sm text-gray-500">
-            <span className="text-gray-700 dark:text-gray-400">
-              {connection ? 'Pick a file' : 'Select connector'}
-            </span>
+            {hasError ? (
+              <span className="text-red-600 mb-2">{hasError}</span>
+            ) : (
+              <span className="text-gray-700 dark:text-gray-400">
+                {connection ? 'Pick a file' : 'Select connector'}
+              </span>
+            )}
           </p>
         </div>
         <SelectConnection
@@ -66,7 +71,9 @@ export const ModalContent: FC<Props> = ({ jwt }) => {
         />
       </div>
       <div className="px-4 py-5 border-t border-gray-200 sm:px-6">
-        <div className="py-4">
+        {connection ? (
+          <FilesContainer serviceId={connection.service_id} jwt={jwt} />
+        ) : (
           <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex justify-center items-center">
             {!callableConnections?.length && !isLoading ? (
               <div className="text-center">
@@ -80,11 +87,9 @@ export const ModalContent: FC<Props> = ({ jwt }) => {
                 </a>{' '}
                 to add file storage connectors
               </div>
-            ) : (
-              <Files serviceId={connection?.service_id}>
-            )}
+            ) : null}
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
