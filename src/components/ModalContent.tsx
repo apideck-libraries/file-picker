@@ -1,19 +1,22 @@
-import React, { FC, HTMLAttributes, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 import { Connection } from '../types/Connection'
+import { File } from '../types/File'
 import FilesContainer from './FilesContainer'
 import SelectConnection from './SelectConnection'
 import useSWR from 'swr'
 
-export interface Props extends HTMLAttributes<HTMLDivElement> {
-  /** The JSON Web Token returned from the Session call */
+export interface Props {
+  /// The JSON Web Token returned from the Session call
   jwt: string
+  // The function that gets called when a file is selected
+  onSelect: (file: File) => any
 }
 
 /**
  * The Apideck File Picker
  */
-export const ModalContent: FC<Props> = ({ jwt }) => {
+export const ModalContent: FC<Props> = ({ jwt, onSelect }) => {
   const [connection, setConnection] = useState<Connection>()
 
   const getConnections = async (url: string) => {
@@ -54,7 +57,7 @@ export const ModalContent: FC<Props> = ({ jwt }) => {
           <h3 className="text-lg font-medium leading-6 text-gray-900">Apideck Filepicker</h3>
           <p className="max-w-2xl mt-1 text-sm text-gray-500">
             {hasError ? (
-              <span className="text-red-600 mb-2">{hasError}</span>
+              <span className="mb-2 text-red-600">{hasError}</span>
             ) : (
               <span className="text-gray-700 dark:text-gray-400">
                 {connection ? 'Pick a file' : 'Select connector'}
@@ -71,13 +74,13 @@ export const ModalContent: FC<Props> = ({ jwt }) => {
         />
       </div>
       <div
-        className="px-4 py-5 border-t border-gray-200 sm:px-6 overflow-y-scroll"
+        className="px-4 py-5 overflow-y-scroll border-t border-gray-200 sm:px-6"
         style={{ maxHeight: '80%' }}
       >
         {connection ? (
-          <FilesContainer serviceId={connection.service_id} jwt={jwt} />
+          <FilesContainer serviceId={connection.service_id} jwt={jwt} onSelect={onSelect} />
         ) : (
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex justify-center items-center">
+          <div className="flex items-center justify-center border-4 border-gray-200 border-dashed rounded-lg h-96">
             {!callableConnections?.length && !isLoading ? (
               <div className="text-center">
                 <a

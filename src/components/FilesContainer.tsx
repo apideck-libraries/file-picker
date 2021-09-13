@@ -11,9 +11,10 @@ import useSWR from 'swr'
 interface Props {
   jwt: string
   serviceId: string
+  onSelect: (file: File) => any
 }
 
-const FilesContainer = ({ jwt, serviceId }: Props) => {
+const FilesContainer = ({ jwt, serviceId, onSelect }: Props) => {
   const [folderId, setFolderId] = useState<null | string>('root')
   const [folders, setFolders] = useState<File[]>([])
   const [file, setFile] = useState<null | File>(null)
@@ -70,7 +71,7 @@ const FilesContainer = ({ jwt, serviceId }: Props) => {
       {isLoading ? <LoadingTable /> : <FilesTable data={files?.data} handleSelect={handleSelect} />}
       {!isLoading ? (
         <SlideOver open={!!file} close={() => setFile(null)} title={file?.name}>
-          <FileDetails file={file} setFile={setFile} />
+          <FileDetails file={file} setFile={setFile} onSelect={onSelect} />
         </SlideOver>
       ) : null}
       {!isLoading && error && <p className="text-red-600">{fileError?.message || fileError}</p>}

@@ -18,7 +18,7 @@ const Breadcrumbs = ({ folders, handleClick }: Props) => {
       leaveFrom="transform opacity-100"
       leaveTo="transform opacity-0"
     >
-      <div className="flex items-center text-sm">
+      <div className="flex items-center mb-2 text-sm">
         <button className="text-gray-600 hover:text-gray-900" onClick={() => handleClick()}>
           <svg
             xmlns="http://www.w3.org/2000/svg"

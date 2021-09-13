@@ -1,12 +1,14 @@
+import { File } from '../types/File'
 import React from 'react'
 import { formatBytes } from '../utils/bytesToSize'
 
 interface Props {
   file: any
   setFile: any
+  onSelect: (file: File) => any
 }
 
-const FileDetails = ({ file, setFile }: Props) => {
+const FileDetails = ({ file, setFile, onSelect }: Props) => {
   return (
     <div className="flex flex-col justify-between h-full">
       <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
@@ -66,15 +68,15 @@ const FileDetails = ({ file, setFile }: Props) => {
       <div className="flex justify-between pt-6">
         <button
           type="button"
-          className="w-full mr-3 items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="items-center w-full px-3 py-2 mr-3 text-sm font-medium leading-4 text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => setFile(null)}
         >
           Close
         </button>
         <button
           type="button"
-          className="w-full ml-3 items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          onClick={() => console.log(file)}
+          className="items-center w-full px-3 py-2 ml-3 text-sm font-medium leading-4 text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          onClick={() => onSelect(file)}
         >
           Select File
         </button>
