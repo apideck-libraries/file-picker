@@ -1,12 +1,19 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, ReactNode } from 'react'
 
 import { Transition } from '@headlessui/react'
 
-export default function SlideOver({ open, close, title, children }) {
+interface Props {
+  open: boolean
+  close: () => void
+  title?: string
+  children: ReactNode
+}
+
+export default function SlideOver({ open, close, title, children }: Props) {
   return (
     <Transition show={open} as={Fragment}>
       <div
-        className="absolute right-0 left-0 bottom-0 rounded-t-2xl"
+        className="absolute bottom-0 left-0 right-0 rounded-t-2xl"
         style={{ width: 'calc(100% - 3rem)', left: '1.5rem' }}
       >
         <Transition.Child
@@ -19,7 +26,7 @@ export default function SlideOver({ open, close, title, children }) {
           leaveTo="translate-y-full"
         >
           <div className="relative w-full rounded-t-2xl">
-            <div className="h-full flex flex-col py-6 bg-white border border-gray-200 shadow-sm overflow-y-auto rounded-t-lg">
+            <div className="flex flex-col h-full py-6 overflow-y-auto bg-white border border-gray-200 rounded-t-lg shadow-sm">
               <div className="relative flex-1 px-4 sm:px-6">{children}</div>
             </div>
           </div>
