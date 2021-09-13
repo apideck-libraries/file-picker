@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 
+import Breadcrumbs from './Breadcrumbs'
+import { File } from '../types/File'
 import FileDetails from './FileDetails'
 import FilesTable from './FilesTable'
 import LoadingTable from './LoadingTable'
@@ -12,8 +14,9 @@ interface Props {
 }
 
 const FilesContainer = ({ jwt, serviceId }: Props) => {
-  const [folderId, setFolderId] = useState()
-  const [file, setFile] = useState()
+  const [folderId, setFolderId] = useState<null | string>('root')
+  const [folders, setFolders] = useState<File[]>([])
+  const [file, setFile] = useState<null | File>(null)
 
   const getFiles = async (url: string) => {
     const response = await fetch(url, {
@@ -30,17 +33,16 @@ const FilesContainer = ({ jwt, serviceId }: Props) => {
   }
 
   const { data: files, error } = useSWR(
-    `https://unify.apideck.com/file-storage/files${
-      folderId ? `?filter[folderId]=${folderId}` : ''
-    }`,
+    `https://unify.apideck.com/file-storage/files?filter[folderId]=${folderId}`,
     getFiles
   )
 
   const isLoading = !files && !error
 
-  const handleSelect = (file) => {
+  const handleSelect = (file: File) => {
     if (file.type === 'folder') {
       setFolderId(file.id)
+      setFolders([...folders, file])
     }
 
     if (file.type === 'file') {
@@ -48,25 +50,31 @@ const FilesContainer = ({ jwt, serviceId }: Props) => {
     }
   }
 
-  // const handleParentFolderSelect = (parentFolder) => {
-  //   setFolderId(parentFolder?.id)
-  // }
+  const handleBreadcrumbClick = (file?: File) => {
+    if (file) {
+      setFolderId(file.id)
+      const index = folders.indexOf(file)
+      const newArray = [...folders.slice(0, index + 1)]
+      setFolders(newArray)
+    } else {
+      setFolderId('root')
+      setFolders([])
+    }
+  }
 
-  // const parentFolders = files?.data?.length && files.data[0].parent_folders
+  const fileError = error || files?.error
+
   return (
-    <>
-      {/* {parentFolders?.length &&
-        parentFolders.map((folder) => (
-          <button onClick={() => handleParentFolderSelect(folder)}>{folder.id}</button>
-        ))} */}
+    <Fragment>
+      <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
       {isLoading ? <LoadingTable /> : <FilesTable data={files?.data} handleSelect={handleSelect} />}
-
       {!isLoading ? (
         <SlideOver open={!!file} close={() => setFile(null)} title={file?.name}>
           <FileDetails file={file} setFile={setFile} />
         </SlideOver>
       ) : null}
-    </>
+      {!isLoading && error && <p className="text-red-600">{fileError?.message || fileError}</p>}
+    </Fragment>
   )
 }
 
