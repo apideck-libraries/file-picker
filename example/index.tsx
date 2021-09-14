@@ -1,3 +1,5 @@
+import '@apideck/file-picker/dist/styles.css'
+
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 

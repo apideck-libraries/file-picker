@@ -1,5 +1,3 @@
-import '../styles/tailwind.css'
-
 import React, { Fragment, ReactElement, createContext, forwardRef, useState } from 'react'
 
 import { File } from '../types/File'
