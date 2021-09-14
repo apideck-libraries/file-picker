@@ -31,8 +31,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint src/**/*.tsx",
-      "pre-push": "tsdx test"
+      "pre-commit": "tsdx lint src/**/*.tsx"
     }
   },
   "prettier": {
