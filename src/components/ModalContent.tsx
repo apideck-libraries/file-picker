@@ -22,12 +22,20 @@ export interface Props {
    * The function that gets called when a file is selected
    */
   onSelect: (file: File) => any
+  /**
+   * Title shown in the modal
+   */
+  title?: string
+  /**
+   * Subtitle shown in the modal
+   */
+  subTitle?: string
 }
 
 /**
  * The Apideck File Picker
  */
-export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect }) => {
+export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, title, subTitle }) => {
   const [connection, setConnection] = useState<Connection>()
 
   const getConnections = async (url: string) => {
@@ -65,13 +73,13 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect }) =>
     <div className="-m-6 bg-white sm:rounded-lg h-modal">
       <div className="flex items-center justify-between px-4 py-5 sm:px-6">
         <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900">Apideck File Picker</h3>
+          <h3 className="text-lg font-medium leading-6 text-gray-900">{title}</h3>
           <p className="max-w-2xl mt-1 text-sm text-gray-500">
             {hasError ? (
               <span className="mb-2 text-red-600">{hasError}</span>
             ) : (
               <span className="text-gray-700 dark:text-gray-400">
-                {connection ? 'Select a file' : 'Select connector'}
+                {connection ? subTitle : 'No connector selected'}
               </span>
             )}
           </p>

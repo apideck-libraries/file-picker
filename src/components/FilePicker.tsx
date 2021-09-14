@@ -25,6 +25,14 @@ export interface Props {
    * The function that gets called when a file is selected
    */
   onSelect: (file: File) => any
+  /**
+   * Title shown in the modal
+   */
+  title?: string
+  /**
+   * Subtitle shown in the modal
+   */
+  subTitle?: string
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
@@ -33,7 +41,15 @@ export const EventsContext = createContext({ onSelect: undefined })
  * The Apideck File Picker component
  */
 export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
-  { appId, consumerId, jwt, trigger, onSelect },
+  {
+    appId,
+    consumerId,
+    jwt,
+    trigger,
+    onSelect,
+    title = 'Apideck File Picker',
+    subTitle = 'Select a file'
+  },
   ref
 ) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -47,7 +63,14 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     <Fragment>
       {React.cloneElement(trigger, { onClick: () => setIsOpen(true), ref })}
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <ModalContent appId={appId} consumerId={consumerId} jwt={jwt} onSelect={handleFileSelect} />
+        <ModalContent
+          appId={appId}
+          consumerId={consumerId}
+          jwt={jwt}
+          onSelect={handleFileSelect}
+          title={title}
+          subTitle={subTitle}
+        />
       </Modal>
     </Fragment>
   )
