@@ -42,6 +42,9 @@
   },
   "name": "@apideck/file-picker",
   "author": "Jake Prins",
+  "publishConfig": {
+    "access": "public"
+  },
   "module": "dist/file-picker.esm.js",
   "size-limit": [
     {
