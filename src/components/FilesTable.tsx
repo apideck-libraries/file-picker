@@ -183,7 +183,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
       </table>
       {isLoadingMore ? (
         <table className="min-w-full divide-y divide-gray-200">
-          {Array.from(Array(16).keys()).map((key) => (
+          {Array.from(Array(12).keys()).map((key) => (
             <LoadingRow key={key} />
           ))}
         </table>

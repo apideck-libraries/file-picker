@@ -46,7 +46,7 @@ export const LoadingRow = () => {
         <td
           className="py-4 space-x-6 text-sm font-medium truncate whitespace-nowrap"
           key={`cell-${i}`}
-          style={{ maxWidth: 200 }}
+          style={{ maxWidth: 100 }}
         >
           <span className="px-16 py-0 bg-gray-200 rounded-sm animate-pulse"></span>
         </td>

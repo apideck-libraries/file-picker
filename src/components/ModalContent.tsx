@@ -65,13 +65,13 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect }) =>
     <div className="-m-6 bg-white sm:rounded-lg h-modal">
       <div className="flex items-center justify-between px-4 py-5 sm:px-6">
         <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900">Apideck Filepicker</h3>
+          <h3 className="text-lg font-medium leading-6 text-gray-900">Apideck File Picker</h3>
           <p className="max-w-2xl mt-1 text-sm text-gray-500">
             {hasError ? (
               <span className="mb-2 text-red-600">{hasError}</span>
             ) : (
               <span className="text-gray-700 dark:text-gray-400">
-                {connection ? 'Pick a file' : 'Select connector'}
+                {connection ? 'Select a file' : 'Select connector'}
               </span>
             )}
           </p>
@@ -96,23 +96,21 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect }) =>
             jwt={jwt}
             onSelect={onSelect}
           />
-        ) : (
+        ) : !callableConnections?.length && !isLoading ? (
           <div className="flex items-center justify-center border-4 border-gray-200 border-dashed rounded-lg h-96">
-            {!callableConnections?.length && !isLoading ? (
-              <div className="text-center">
-                <a
-                  href={`https://vault.apideck.com/session/${jwt}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-indigo-600 hover:text-indigo-900"
-                >
-                  Go to vault
-                </a>{' '}
-                to add file storage connectors
-              </div>
-            ) : null}
+            <div className="text-center">
+              <a
+                href={`https://vault.apideck.com/session/${jwt}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-indigo-600 hover:text-indigo-900"
+              >
+                Go to vault
+              </a>{' '}
+              to add file storage connectors
+            </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   )

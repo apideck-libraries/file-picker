@@ -1,6 +1,8 @@
-import React, { Fragment, useState } from 'react'
-import useSWR from 'swr'
+import React, { Fragment, useEffect, useState } from 'react'
+import { Waypoint } from 'react-waypoint'
+import useSWRInfinite from 'swr/infinite'
 import { File } from '../types/File'
+import { usePrevious } from '../utils/usePrevious'
 import Breadcrumbs from './Breadcrumbs'
 import FileDetails from './FileDetails'
 import FilesTable from './FilesTable'
@@ -34,8 +36,9 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   const [folderId, setFolderId] = useState<null | string>('root')
   const [folders, setFolders] = useState<File[]>([])
   const [file, setFile] = useState<null | File>(null)
+  const prevServiceId = usePrevious(serviceId)
 
-  const getFiles = async (url: string) => {
+  const fetcher = async (url: string) => {
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
@@ -49,14 +52,34 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
     return await response.json()
   }
 
-  const { data: files, error } = useSWR(
-    `https://unify.apideck.com/file-storage/files?filter${
-      folderId === 'shared' ? '[shared]=true' : `[folder_id]=${folderId}`
-    }`,
-    getFiles
-  )
+  const getKey = (pageIndex: number, previousPage: any) => {
+    const filterParams =
+      folderId === 'shared' ? 'filter[shared]=true' : `filter[folder_id]=${folderId}`
+    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}`
 
-  const isLoading = !files && !error
+    if (previousPage && !previousPage?.data?.length) return null
+    if (pageIndex === 0) return fileUrl
+
+    const cursor = previousPage?.meta?.cursors?.next
+
+    return `${fileUrl}&cursor=${cursor}`
+  }
+
+  const { data, setSize, size, error } = useSWRInfinite(getKey, fetcher)
+
+  const nextPage = () => {
+    const nextCursor = data?.length && data[data.length - 1]?.meta?.cursors?.next
+
+    if (nextCursor) {
+      setSize(size + 1)
+    }
+  }
+
+  useEffect(() => {
+    if (prevServiceId && prevServiceId !== serviceId) {
+      setSize(0)
+    }
+  }, [serviceId, prevServiceId])
 
   const handleSelect = (file: File) => {
     if (file.type === 'folder') {
@@ -81,22 +104,41 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
     }
   }
 
-  const filesError = error || files?.error
-  const filesData =
-    folderId === 'root' && files?.data
-      ? [{ id: 'shared', name: 'Shared with me', type: 'folder' }, ...files?.data]
-      : files?.data
+  const filesError = error || (data?.length && data[data.length - 1]?.error)
+  const isLoading = !data && !error
+  const isLoadingMore = size > 0 && data && typeof data[size - 1] === 'undefined'
+
+  let files = data?.map((page) => page?.data).flat() || []
+
+  // Add Google Drive shared folder to root
+  if (folderId === 'root' && data?.length && serviceId === 'google-drive') {
+    const sharedFolder = { id: 'shared', name: 'Shared with me', type: 'folder' }
+    if (files?.length) {
+      files = [sharedFolder, ...files]
+    } else {
+      files.push(sharedFolder)
+    }
+  }
 
   return (
     <Fragment>
       <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
-      {isLoading ? <LoadingTable /> : <FilesTable data={filesData} handleSelect={handleSelect} />}
+      {isLoading ? (
+        <LoadingTable />
+      ) : (
+        <FilesTable data={files} handleSelect={handleSelect} isLoadingMore={isLoadingMore} />
+      )}
       {!isLoading ? (
         <SlideOver open={!!file}>
           <FileDetails file={file} setFile={setFile} onSelect={onSelect} />
         </SlideOver>
       ) : null}
       {!isLoading && error && <p className="text-red-600">{filesError?.message || filesError}</p>}
+      {files?.length && !isLoadingMore ? (
+        <div className="flex flex-row-reverse py-4 border-gray-200">
+          <Waypoint onEnter={() => nextPage()} />
+        </div>
+      ) : null}
     </Fragment>
   )
 }

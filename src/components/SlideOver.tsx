@@ -1,6 +1,5 @@
-import React, { Fragment, ReactNode } from 'react'
-
 import { Transition } from '@headlessui/react'
+import React, { Fragment, ReactNode } from 'react'
 
 interface Props {
   open: boolean
@@ -24,7 +23,7 @@ const SlideOver = ({ open, children }: Props) => {
           leaveTo="translate-y-full"
         >
           <div className="relative w-full rounded-t-2xl">
-            <div className="flex flex-col h-full py-6 overflow-y-auto bg-white border border-gray-200 rounded-t-lg shadow-sm">
+            <div className="flex flex-col h-full py-6 overflow-y-auto border border-gray-200 rounded-t-lg shadow-sm bg-gray-50">
               <div className="relative flex-1 px-4 sm:px-6">{children}</div>
             </div>
           </div>
