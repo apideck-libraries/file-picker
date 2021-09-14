@@ -1,22 +1,33 @@
 import React, { FC, useEffect, useState } from 'react'
-
+import useSWR from 'swr'
 import { Connection } from '../types/Connection'
 import { File } from '../types/File'
 import FilesContainer from './FilesContainer'
 import SelectConnection from './SelectConnection'
-import useSWR from 'swr'
 
 export interface Props {
-  /// The JSON Web Token returned from the Session call
+  /**
+   * The ID of your Unify application
+   */
+  appId: string
+  /**
+   * The ID of the consumer which you want to fetch files from
+   */
+  consumerId: string
+  /**
+   * The JSON Web Token returned from the Create Session call
+   */
   jwt: string
-  // The function that gets called when a file is selected
+  /**
+   * The function that gets called when a file is selected
+   */
   onSelect: (file: File) => any
 }
 
 /**
  * The Apideck File Picker
  */
-export const ModalContent: FC<Props> = ({ jwt, onSelect }) => {
+export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect }) => {
   const [connection, setConnection] = useState<Connection>()
 
   const getConnections = async (url: string) => {
@@ -74,11 +85,17 @@ export const ModalContent: FC<Props> = ({ jwt, onSelect }) => {
         />
       </div>
       <div
-        className="px-4 py-5 overflow-y-scroll border-t border-gray-200 sm:px-6"
+        className="px-4 py-5 overflow-y-auto border-t border-gray-200 sm:px-6"
         style={{ maxHeight: '80%' }}
       >
         {connection ? (
-          <FilesContainer serviceId={connection.service_id} jwt={jwt} onSelect={onSelect} />
+          <FilesContainer
+            appId={appId}
+            consumerId={consumerId}
+            serviceId={connection.service_id}
+            jwt={jwt}
+            onSelect={onSelect}
+          />
         ) : (
           <div className="flex items-center justify-center border-4 border-gray-200 border-dashed rounded-lg h-96">
             {!callableConnections?.length && !isLoading ? (

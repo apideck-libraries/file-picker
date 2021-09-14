@@ -4,12 +4,10 @@ import { Transition } from '@headlessui/react'
 
 interface Props {
   open: boolean
-  close: () => void
-  title?: string
   children: ReactNode
 }
 
-export default function SlideOver({ open, close, title, children }: Props) {
+const SlideOver = ({ open, children }: Props) => {
   return (
     <Transition show={open} as={Fragment}>
       <div
@@ -35,3 +33,5 @@ export default function SlideOver({ open, close, title, children }: Props) {
     </Transition>
   )
 }
+
+export default SlideOver
