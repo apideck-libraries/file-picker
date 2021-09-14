@@ -50,7 +50,7 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   }
 
   const { data: files, error } = useSWR(
-    `https://unify.apideck.com/file-storage/files?filter[folderId]=${folderId}`,
+    `https://unify.apideck.com/file-storage/files?filter[folder_id]=${folderId}`,
     getFiles
   )
 
