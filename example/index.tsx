@@ -1,7 +1,7 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
 
-import { FilePicker } from '../.'
+import { FilePicker } from '@apideck/file-picker'
 
 const App = () => {
   return (
