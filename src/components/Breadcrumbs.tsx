@@ -1,6 +1,6 @@
-import { File } from '../types/File'
-import React from 'react'
 import { Transition } from '@headlessui/react'
+import React from 'react'
+import { File } from '../types/File'
 
 interface Props {
   folders: File[]
@@ -46,6 +46,7 @@ const Breadcrumbs = ({ folders, handleClick }: Props) => {
               leaveTo="transform opacity-0"
               className="flex items-center"
               as="div"
+              key={folder.id}
             >
               <svg
                 className="flex-shrink-0 w-5 h-5 text-gray-300"

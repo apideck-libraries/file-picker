@@ -50,7 +50,9 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   }
 
   const { data: files, error } = useSWR(
-    `https://unify.apideck.com/file-storage/files?filter[folder_id]=${folderId}`,
+    `https://unify.apideck.com/file-storage/files?filter${
+      folderId === 'shared' ? '[shared]=true' : `[folder_id]=${folderId}`
+    }`,
     getFiles
   )
 
@@ -79,18 +81,22 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
     }
   }
 
-  const fileError = error || files?.error
+  const filesError = error || files?.error
+  const filesData =
+    folderId === 'root' && files?.data
+      ? [{ id: 'shared', name: 'Shared with me', type: 'folder' }, ...files?.data]
+      : files?.data
 
   return (
     <Fragment>
       <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
-      {isLoading ? <LoadingTable /> : <FilesTable data={files?.data} handleSelect={handleSelect} />}
+      {isLoading ? <LoadingTable /> : <FilesTable data={filesData} handleSelect={handleSelect} />}
       {!isLoading ? (
         <SlideOver open={!!file}>
           <FileDetails file={file} setFile={setFile} onSelect={onSelect} />
         </SlideOver>
       ) : null}
-      {!isLoading && error && <p className="text-red-600">{fileError?.message || fileError}</p>}
+      {!isLoading && error && <p className="text-red-600">{filesError?.message || filesError}</p>}
     </Fragment>
   )
 }

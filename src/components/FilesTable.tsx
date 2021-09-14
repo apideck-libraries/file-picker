@@ -1,11 +1,8 @@
-import { useSortBy, useTable } from 'react-table'
-
-import { LoadingRow } from './LoadingTable'
-import React from 'react'
-// import { ILog } from 'types/Log'
-// import LogDetails from './LogDetails'
 import { Transition } from '@headlessui/react'
+import React from 'react'
+import { useSortBy, useTable } from 'react-table'
 import { formatBytes } from '../utils/bytesToSize'
+import { LoadingRow } from './LoadingTable'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 interface IProps {
@@ -28,7 +25,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
               <div className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6 inline-block mr-1 text-yellow-300"
+                  className="inline-block w-6 h-6 mr-1 text-yellow-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -46,7 +43,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
           }
           return (
             <div className="flex items-center truncate">
-              <svg viewBox="0 0 24 24" className="h-6 w-6 inline-block mr-1 text-gray-500">
+              <svg viewBox="0 0 24 24" className="inline-block w-6 h-6 mr-1 text-gray-500">
                 <path
                   d="M17 6v12c0 .52-.2 1-1 1H4c-.7 0-1-.33-1-1V2c0-.55.42-1 1-1h8l5 5zM14 8h-3.13c-.51 0-.87-.34-.87-.87V4"
                   stroke="currentColor"
@@ -69,9 +66,10 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
         Header: 'Updated',
         accessor: 'updated_at',
         Cell: ({ value }: { value: string }) => {
+          if (!value) return <span className="text-gray-900">-</span>
           const date = new Date(value)
           return (
-            <span className="text-gray-900">{`${
+            <span className="text-gray-900 ">{`${
               months[date.getMonth()]
             } ${date.getDay()}, ${new Date(value).toLocaleTimeString([], {
               hour: '2-digit',
@@ -101,7 +99,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
               {headerGroup.headers.map((column: any, i: number) => (
                 <th
                   key={`column-${i}`}
-                  className="py-3 pr-2 space-x-6 text-xs tracking-wide text-left text-gray-500 uppercase font-medium"
+                  className="py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase"
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
                   {column.render('Header')}
@@ -164,13 +162,13 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
                 as="tr"
                 {...row.getRowProps()}
                 key={`row-${i}`}
-                className="hover:bg-gray-50 cursor-pointer"
+                className="cursor-pointer hover:bg-gray-50"
                 onClick={() => handleSelect(row.original)}
               >
                 {row.cells.map((cell: any, i: number) => {
                   return (
                     <td
-                      className="max-w-2xs py-3 space-x-6 text-xs text-gray-900 truncate whitespace-nowrap"
+                      className="py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap"
                       {...cell.getCellProps()}
                       key={`cell-${i}`}
                     >
