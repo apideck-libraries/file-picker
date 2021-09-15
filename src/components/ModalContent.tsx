@@ -53,7 +53,8 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
 
   const { data: connections, error } = useSWR(
     `https://unify.apideck.com/vault/connections`,
-    getConnections
+    getConnections,
+    { shouldRetryOnError: false }
   )
   const isLoading = !connections && !error
   const hasError = connections?.error || error
