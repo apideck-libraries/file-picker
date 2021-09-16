@@ -1,7 +1,6 @@
 import { Menu, Transition } from '@headlessui/react'
 import React, { Dispatch, SetStateAction } from 'react'
 import { Connection } from '../types/Connection'
-import { isAuthorized } from '../utils'
 import Spinner from './Spinner'
 
 interface Props {
@@ -13,22 +12,32 @@ interface Props {
 }
 
 const SelectConnection = ({ jwt, connections, connection, setConnection, isLoading }: Props) => {
-  const selectConnection = async (connection: Connection) => {
-    if (!isAuthorized(connection)) {
-      redirectToVault()
-    }
-    setConnection(connection)
-  }
-
   const redirectToVault = () => {
-    const redirectUrl = `https://vault.apideck.com/integrations/crm/${connection?.service_id}/enable?jwt=${jwt}`
+    const redirectUrl = `https://vault.apideck.com/session/${jwt}`
     window.location.href = redirectUrl
   }
 
   const statusColor = (connection: Connection) => {
     if (!connection.enabled) return 'bg-gray-300'
-    if (!isAuthorized(connection)) return 'bg-yellow-400'
-    return 'bg-primary-500'
+    if (connection.state !== 'callable') return 'bg-yellow-400'
+    return 'bg-green-400'
+  }
+
+  const handleClick = (connection: Connection) => {
+    if (connection.state === 'callable') {
+      setConnection(connection)
+      return
+    }
+    if (connection.state === 'available') {
+      // Enable integration in vault
+      const redirectUrl = `https://vault.apideck.com/integrations/file-storage/${connection?.service_id}/enable?jwt=${jwt}`
+      window.location.href = redirectUrl
+      return
+    }
+
+    // Redirect to integration settings page
+    const redirectUrl = `https://vault.apideck.com/integrations/file-storage/${connection?.service_id}/enable?jwt=${jwt}`
+    window.location.href = redirectUrl
   }
 
   return (
@@ -81,7 +90,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
                       <Menu.Item key={i}>
                         {({ active }) => (
                           <div
-                            onClick={() => selectConnection(connection)}
+                            onClick={() => handleClick(connection)}
                             className={`${
                               active ? 'bg-gray-100 text-gray-900' : 'text-gray-600'
                             } flex items-center justify-between min-w-0 mx-2 cursor-pointer rounded-md py-0.5 overflow-hidden ${

@@ -42,8 +42,8 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
-        'x-apideck-consumer-id': 'test-consumer-ckgrs95l3y4er0b99qa37buj2',
-        'x-apideck-app-id': 'cfaZrORgaH2PMQpIcjTpfhERIpIEUJHev09ucjTp',
+        'x-apideck-consumer-id': consumerId,
+        'x-apideck-app-id': appId,
         'x-apideck-auth-type': 'JWT',
         Authorization: `Bearer ${jwt}`
       }
@@ -51,16 +51,18 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
     return await response.json()
   }
 
-  const { data: connections, error } = useSWR(
-    `https://unify.apideck.com/vault/connections`,
+  const { data, error } = useSWR(
+    `https://unify.apideck.com/vault/connections?api=file-storage`,
     getConnections,
-    { shouldRetryOnError: false }
+    {
+      shouldRetryOnError: false
+    }
   )
-  const isLoading = !connections && !error
-  const hasError = connections?.error || error
-  const callableConnections = connections?.data?.filter(
-    (connection: Connection) =>
-      connection.state === 'callable' && connection.unified_api === 'file-storage'
+  const isLoading = !data && !error
+  const hasError = data?.error || error
+  const connections = data?.data
+  const callableConnections = connections?.filter(
+    (connection: Connection) => connection.state === 'callable'
   )
 
   useEffect(() => {
@@ -87,7 +89,7 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
         </div>
         <SelectConnection
           jwt={jwt}
-          connections={callableConnections}
+          connections={connections}
           connection={connection}
           setConnection={setConnection}
           isLoading={isLoading}
@@ -102,7 +104,7 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
             jwt={jwt}
             onSelect={onSelect}
           />
-        ) : !callableConnections?.length && !isLoading ? (
+        ) : !connections?.length && !isLoading ? (
           <div className="flex items-center justify-center border-4 border-gray-200 border-dashed rounded-lg h-96">
             <div className="text-center">
               <a
