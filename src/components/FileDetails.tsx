@@ -77,7 +77,7 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
         </button>
         <button
           type="button"
-          className="items-center w-full px-3 py-2 ml-2 text-sm font-medium leading-4 text-white bg-indigo-600 border border-transparent rounded-md shadow-sm sm:ml-3 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="items-center w-full px-3 py-2 ml-2 text-sm font-medium leading-4 text-white bg-blue-600 border border-transparent rounded-md shadow-sm sm:ml-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => onSelect(file)}
         >
           Select file
