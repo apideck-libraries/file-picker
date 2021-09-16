@@ -71,7 +71,7 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
   }, [setConnection, callableConnections])
 
   return (
-    <div className="-m-6 bg-white sm:rounded-lg h-modal">
+    <div className="-m-6 bg-white sm:rounded-lg h-modal" style={{ height: '34rem' }}>
       <div className="flex items-center justify-between px-4 py-5 sm:px-6">
         <div>
           <h3 className="text-lg font-medium leading-6 text-gray-900">{title}</h3>

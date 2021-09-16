@@ -169,6 +169,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
                   return (
                     <td
                       className="py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap"
+                      style={{ maxWidth: '16rem' }}
                       {...cell.getCellProps()}
                       key={`cell-${i}`}
                     >
