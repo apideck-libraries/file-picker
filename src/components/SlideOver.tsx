@@ -7,11 +7,14 @@ interface Props {
 }
 
 const SlideOver = ({ open, children }: Props) => {
+  const desktopStyles = { width: 'calc(100% - 3rem)', left: '1.5rem' }
+  const mobileStyles = { width: 'calc(100% - 2rem)', left: '1rem' }
+
   return (
     <Transition show={open} as={Fragment}>
       <div
         className="absolute bottom-0 left-0 right-0 rounded-t-2xl"
-        style={{ width: 'calc(100% - 3rem)', left: '1.5rem' }}
+        style={window?.innerWidth > 768 ? desktopStyles : mobileStyles}
       >
         <Transition.Child
           as={Fragment}

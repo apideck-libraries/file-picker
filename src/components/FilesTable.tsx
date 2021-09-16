@@ -25,7 +25,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
               <div className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="inline-block w-6 h-6 mr-1 text-yellow-300"
+                  className="inline-block w-5 h-5 mr-1 text-yellow-300"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -43,7 +43,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
           }
           return (
             <div className="flex items-center truncate">
-              <svg viewBox="0 0 24 24" className="inline-block w-6 h-6 mr-1 text-gray-500">
+              <svg viewBox="0 0 24 24" className="inline-block w-5 h-5 mr-1 text-gray-500">
                 <path
                   d="M17 6v12c0 .52-.2 1-1 1H4c-.7 0-1-.33-1-1V2c0-.55.42-1 1-1h8l5 5zM14 8h-3.13c-.51 0-.87-.34-.87-.87V4"
                   stroke="currentColor"
