@@ -160,7 +160,6 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   }, [debouncedSearchTerm])
 
   const handleSearch = (text: string) => {
-    console.log(text)
     setSearchTerm(text)
   }
 

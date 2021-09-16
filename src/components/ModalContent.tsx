@@ -93,10 +93,7 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
           isLoading={isLoading}
         />
       </div>
-      <div
-        className="px-4 py-5 overflow-y-auto border-t border-gray-200 sm:px-6"
-        style={{ maxHeight: '80%' }}
-      >
+      <div className="h-full px-4 py-5 overflow-y-auto border-t border-gray-200 sm:px-6">
         {connection ? (
           <FilesContainer
             appId={appId}

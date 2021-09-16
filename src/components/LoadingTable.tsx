@@ -16,26 +16,28 @@ export const LoadingTable = () => {
   const array = Array.from(Array(8).keys())
 
   return (
-    <table className="min-w-full divide-y divide-gray-200">
-      <thead>
-        <tr>
-          {columns.map((column: any, i: number) => (
-            <th
-              key={`column-${i}`}
-              className="py-3 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase"
-            >
-              {column.Header}
-            </th>
-          ))}
-        </tr>
-      </thead>
+    <div className="overflow-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            {columns.map((column: any, i: number) => (
+              <th
+                key={`column-${i}`}
+                className="py-3 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase"
+              >
+                {column.Header}
+              </th>
+            ))}
+          </tr>
+        </thead>
 
-      <tbody className="bg-white divide-y divide-gray-200">
-        {array.map((_, i) => (
-          <LoadingRow key={i} />
-        ))}
-      </tbody>
-    </table>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {array.map((_, i) => (
+            <LoadingRow key={i} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 
