@@ -24,7 +24,6 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
   }
 
   const handleClick = (connection: Connection) => {
-    debugger
     if (connection.state === 'callable') {
       setConnection(connection)
       return

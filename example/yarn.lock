@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@apideck/file-picker@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@apideck/file-picker/-/file-picker-0.1.6.tgz#eb8d8ad8ca6a03808a149dfaa2e71168799e9a11"
-  integrity sha512-8BqRNvsMQzjdgReDp+Fk69rqVF57IG0gPhV6vYRBgqN5WBhVIiAlThbEkUDCnUoKZ8MTBGzImaYOapqB8lqfTg==
+"@apideck/file-picker@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@apideck/file-picker/-/file-picker-0.1.10.tgz#2b831a41b14c6e5695103f65661578c7ee7ba335"
+  integrity sha512-trc/HXBrMhFgDLZe0LMmFLzlNQKD6GM45vIP16YKkJvZM5wfeprhD8FbshPKY7vN2INwW06Lt+rKbgCOc4bJfg==
   dependencies:
     "@headlessui/react" "^1.4.1"
     react-table "^7.7.0"
