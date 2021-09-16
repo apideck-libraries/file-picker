@@ -24,6 +24,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
   }
 
   const handleClick = (connection: Connection) => {
+    debugger
     if (connection.state === 'callable') {
       setConnection(connection)
       return
@@ -36,7 +37,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
     }
 
     // Redirect to integration settings page
-    const redirectUrl = `https://vault.apideck.com/integrations/file-storage/${connection?.service_id}/enable?jwt=${jwt}`
+    const redirectUrl = `https://vault.apideck.com/integrations/file-storage/${connection?.service_id}?jwt=${jwt}`
     window.location.href = redirectUrl
   }
 
