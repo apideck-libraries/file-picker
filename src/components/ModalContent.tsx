@@ -104,8 +104,8 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
             jwt={jwt}
             onSelect={onSelect}
           />
-        ) : !connections?.length && !isLoading ? (
-          <div className="flex items-center justify-center border-4 border-gray-200 border-dashed rounded-lg h-96">
+        ) : !callableConnections?.length && !isLoading ? (
+          <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96">
             <div className="text-center">
               <a
                 href={`https://vault.apideck.com/session/${jwt}`}
