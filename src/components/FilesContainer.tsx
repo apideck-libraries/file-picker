@@ -1,15 +1,16 @@
 import React, { Fragment, useEffect, useState } from 'react'
-import { Waypoint } from 'react-waypoint'
-import useSWRInfinite from 'swr/infinite'
-import { File } from '../types/File'
-import { useDebounce } from '../utils/useDebounce'
-import { usePrevious } from '../utils/usePrevious'
+
 import Breadcrumbs from './Breadcrumbs'
+import { File } from '../types/File'
 import FileDetails from './FileDetails'
 import FilesTable from './FilesTable'
 import LoadingTable from './LoadingTable'
 import Search from './Search'
 import SlideOver from './SlideOver'
+import { Waypoint } from 'react-waypoint'
+import { useDebounce } from '../utils/useDebounce'
+import { usePrevious } from '../utils/usePrevious'
+import useSWRInfinite from 'swr/infinite'
 
 interface Props {
   /**
@@ -60,9 +61,10 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   }
 
   const getKey = (pageIndex: number, previousPage: any) => {
-    const filterParams =
-      folderId === 'shared' ? 'filter[shared]=true' : `filter[folder_id]=${folderId}`
-    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}`
+    // If we switch from connector we want the folder ID to always be root
+    const id = prevServiceId && prevServiceId !== serviceId ? 'root' : folderId
+    const filterParams = id === 'shared' ? 'filter[shared]=true' : `filter[folder_id]=${id}`
+    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}#serviceId=${serviceId}`
 
     if (previousPage && !previousPage?.data?.length) return null
     if (pageIndex === 0) return fileUrl
@@ -86,7 +88,8 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
 
   useEffect(() => {
     if (prevServiceId && prevServiceId !== serviceId) {
-      setSize(0)
+      setFolderId('root')
+      setFolders([])
     }
   }, [serviceId, prevServiceId])
 
@@ -157,11 +160,13 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
         })
         .finally(() => setIsSearching(false))
     }
-  }, [debouncedSearchTerm])
+  }, [debouncedSearchTerm, serviceId])
 
   const handleSearch = (text: string) => {
     setSearchTerm(text)
   }
+
+  const hasFiles = searchMode ? searchResults?.length : files?.length
 
   return (
     <Fragment>
@@ -178,18 +183,17 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
           setIsSearchVisible={setIsSearchVisible}
         />
       </div>
-      {!isSearching && searchMode && !searchResults?.length ? (
-        <p className="py-4 text-center text-gray-700">No results found</p>
-      ) : null}
-      {isLoading || isSearching ? (
-        <LoadingTable />
-      ) : (
+      {isLoading || isSearching ? <LoadingTable /> : null}
+      {!isLoading && hasFiles ? (
         <FilesTable
           data={searchMode && searchResults ? searchResults : files}
           handleSelect={handleSelect}
           isLoadingMore={isLoadingMore}
         />
-      )}
+      ) : null}
+      {!isLoading && !hasFiles ? (
+        <p className="py-4 text-sm text-center text-gray-700">No files found</p>
+      ) : null}
       {!isLoading ? (
         <SlideOver open={!!file}>
           <FileDetails file={file} setFile={setFile} onSelect={onSelect} />

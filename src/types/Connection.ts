@@ -1,5 +1,8 @@
 import { FormField } from './FormField'
-import { RawJSON } from './RawJson'
+
+export interface RawJSON {
+  [key: string]: string | string[] | number | boolean | undefined
+}
 
 export interface Settings extends RawJSON {
   instance_url?: string
