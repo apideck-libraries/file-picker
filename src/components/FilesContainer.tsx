@@ -191,7 +191,7 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
           isLoadingMore={isLoadingMore}
         />
       ) : null}
-      {!isLoading && !hasFiles ? (
+      {!isLoading && !isSearching && !hasFiles ? (
         <p className="py-4 text-sm text-center text-gray-700">No files found</p>
       ) : null}
       {!isLoading ? (
