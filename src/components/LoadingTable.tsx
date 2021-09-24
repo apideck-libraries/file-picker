@@ -13,7 +13,7 @@ const columns = [
 ]
 
 export const LoadingTable = () => {
-  const array = Array.from(Array(8).keys())
+  const array = Array.from(Array(6).keys())
 
   return (
     <div className="overflow-auto">

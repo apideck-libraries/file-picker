@@ -33,6 +33,10 @@ export interface Props {
    * Subtitle shown in the modal
    */
   subTitle?: string
+  /**
+   * Show powered by Apideck in the modal backdrop
+   */
+  showAttribution?: boolean
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
@@ -48,7 +52,8 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     trigger,
     onSelect,
     title = 'Apideck File Picker',
-    subTitle = 'Select a file'
+    subTitle = 'Select a file',
+    showAttribution = true
   },
   ref
 ) {
@@ -62,7 +67,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
   return (
     <Fragment>
       {React.cloneElement(trigger, { onClick: () => setIsOpen(true), ref })}
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} showAttribution={showAttribution}>
         <ModalContent
           appId={appId}
           consumerId={consumerId}

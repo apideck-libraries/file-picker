@@ -1,5 +1,6 @@
 import React, { CSSProperties, useEffect, useState } from 'react'
 
+import Logo from './Logo'
 import { Transition } from '@headlessui/react'
 import { createPortal } from 'react-dom'
 
@@ -8,10 +9,11 @@ export interface Props extends React.HTMLAttributes<HTMLDivElement> {
   isOpen: boolean
   className?: string
   style?: CSSProperties
+  showAttribution?: boolean
 }
 
 export const Modal = React.forwardRef<HTMLDivElement, Props>(function Modal(props, ref) {
-  const { children, onClose, isOpen, className = '', style = {}, ...other } = props
+  const { children, onClose, isOpen, showAttribution, className = '', style = {}, ...other } = props
 
   const [mounted, setMounted] = useState(false)
 
@@ -34,6 +36,17 @@ export const Modal = React.forwardRef<HTMLDivElement, Props>(function Modal(prop
           data-testid="backdrop"
           onClick={onClose}
         >
+          {showAttribution ? (
+            <a
+              className="absolute flex text-sm text-center text-gray-200 bottom-4 lg:left-4"
+              href="https://apideck.com/products/unify"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Powered by <Logo className="h-5 text-gray-300" />
+              <span>Unify</span>
+            </a>
+          ) : null}
           <Transition.Child
             enter="transition ease-out duration-150"
             enterFrom="opacity-0 transform translate-y-1/4 scale-95"
