@@ -38,12 +38,12 @@ export const Modal = React.forwardRef<HTMLDivElement, Props>(function Modal(prop
         >
           {showAttribution ? (
             <a
-              className="absolute flex text-sm text-center text-gray-200 bottom-4 lg:left-4"
+              className="absolute flex text-sm text-center text-gray-100 bottom-5 lg:left-5 xl:left-6 xl:bottom-6"
               href="https://apideck.com/products/unify"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Powered by <Logo className="h-5 text-gray-300" />
+              Powered by <Logo className="h-5" />
               <span>Unify</span>
             </a>
           ) : null}
