@@ -37,6 +37,19 @@ const MyComponent = () => {
 }
 ```
 
+### Properties
+
+| Property        | Type    | Required | Default             | Description                                                      |
+| --------------- | ------- | -------- | ------------------- | ---------------------------------------------------------------- |
+| appId           | string  | true     | -                   | The ID of your Unify application                                 |
+| consumerId      | string  | true     | -                   | The ID of the consumer which you want to fetch files from        |
+| jwt             | string  | true     | -                   | The JSON Web Token returned from the Create Session call         |
+| onSelect        | event   | true     | -                   | The function that gets called when a file is selected            |
+| trigger         | element | true     | -                   | The component that should trigger the File Picker modal on click |
+| title           | string  | false    | Apideck File Picker | Title shown in the modal                                         |
+| subTitle        | string  | false    | Select a file       | Subtitle shown in the modal                                      |
+| showAttribution | boolean | false    | true                | Show "Powered by Apideck" in the backdrop of the modal backdrop  |
+
 ### Using Tailwind?
 
 The FilePicker is styled using [Tailwind CSS](https://tailwindcss.com/). If you were to use the File Picker component in a project that also uses Tailwind CSS, you can omit the CSS file import, and include the package in the purge path of the tailwind.config.css.
