@@ -1,8 +1,9 @@
-import { Transition } from '@headlessui/react'
-import React from 'react'
 import { useSortBy, useTable } from 'react-table'
-import { formatBytes } from '../utils/bytesToSize'
+
 import { LoadingRow } from './LoadingTable'
+import React from 'react'
+import { Transition } from '@headlessui/react'
+import { formatBytes } from '../utils/bytesToSize'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 interface IProps {
@@ -10,9 +11,10 @@ interface IProps {
   isLoading?: boolean
   isLoadingMore?: boolean
   handleSelect: any
+  hasSearchResults: boolean
 }
 
-const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
+const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }: IProps) => {
   const columns: any[] = React.useMemo(
     () => [
       {
@@ -81,6 +83,25 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
     ],
     []
   )
+
+  if (hasSearchResults) {
+    columns.push({
+      Header: () => <div className="text-right">Service</div>,
+      accessor: 'connection',
+      Cell: ({ value }: { value: Connection }) => {
+        if (!value) return <span className="text-gray-900">-</span>
+        return (
+          <div className="flex justify-end">
+            <img
+              className="inline-block w-5 h-5 text-right rounded-full"
+              src={value?.icon ? value.icon : '/img/logo.png'}
+              alt={value.service_id}
+            />
+          </div>
+        )
+      }
+    })
+  }
 
   const { getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
     {
@@ -168,7 +189,9 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
                 {row.cells.map((cell: any, i: number) => {
                   return (
                     <td
-                      className="py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap"
+                      className={`py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap ${
+                        i === row.cells.length - 1 ? 'text-right' : ''
+                      }`}
                       style={{ maxWidth: '16rem' }}
                       {...cell.getCellProps()}
                       key={`cell-${i}`}
