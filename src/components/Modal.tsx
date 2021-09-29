@@ -58,6 +58,7 @@ export const Modal = React.forwardRef<HTMLDivElement, Props>(function Modal(prop
             style={{ maxHeight: '90%', ...style }}
             ref={ref}
             role="dialog"
+            id="modal-component"
             onClick={(e: React.MouseEvent<HTMLElement>) => e.stopPropagation()}
             {...other}
           >

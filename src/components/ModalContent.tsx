@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useState } from 'react'
-import useSWR from 'swr'
+
 import { Connection } from '../types/Connection'
 import { File } from '../types/File'
 import FilesContainer from './FilesContainer'
 import SelectConnection from './SelectConnection'
+import useSWR from 'swr'
 
 export interface Props {
   /**
@@ -72,6 +73,8 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setConnection, callableConnections])
 
+  const modalHeight = document.getElementById('modal-component')?.clientHeight
+
   return (
     <div className="-m-6 bg-white sm:rounded-lg h-modal" style={{ height: '34rem' }}>
       <div className="flex items-center justify-between px-4 py-5 sm:px-6">
@@ -95,14 +98,22 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
           isLoading={isLoading}
         />
       </div>
-      <div className="h-full px-4 py-5 overflow-y-auto border-t border-gray-200 sm:px-6">
+      <div
+        className="px-4 py-5 overflow-y-auto border-t border-gray-200 sm:px-6"
+        style={{
+          height:
+            typeof window !== 'undefined' && modalHeight ? modalHeight - 70 : 'calc(100% - 70px)'
+        }}
+      >
         {connection ? (
           <FilesContainer
             appId={appId}
             consumerId={consumerId}
-            serviceId={connection.service_id}
             jwt={jwt}
             onSelect={onSelect}
+            connections={callableConnections}
+            connection={connection}
+            setConnection={setConnection}
           />
         ) : !callableConnections?.length && !isLoading ? (
           <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96">

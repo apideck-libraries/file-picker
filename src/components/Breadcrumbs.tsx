@@ -1,6 +1,7 @@
-import { Transition } from '@headlessui/react'
-import React from 'react'
+import React, { Fragment } from 'react'
+
 import { File } from '../types/File'
+import { Transition } from '@headlessui/react'
 
 interface Props {
   folders: File[]
@@ -9,15 +10,7 @@ interface Props {
 
 const Breadcrumbs = ({ folders, handleClick }: Props) => {
   return (
-    <Transition
-      show={!!folders?.length}
-      enter="transition ease-out duration-200"
-      enterFrom="transform opacity-60"
-      enterTo="transform opacity-100"
-      leave="transition ease-in duration-200"
-      leaveFrom="transform opacity-100"
-      leaveTo="transform opacity-0"
-    >
+    <Fragment>
       <div className="flex items-center text-sm">
         <button className="text-gray-600 hover:text-gray-900" onClick={() => handleClick()}>
           <svg
@@ -37,43 +30,53 @@ const Breadcrumbs = ({ folders, handleClick }: Props) => {
         </button>
         {folders.map((folder, i) => {
           return (
-            <Transition.Child
+            <Transition
+              show={true}
               enter="transition ease-out duration-200"
-              enterFrom="transform opacity-60 translate-x-1"
+              enterFrom="transform opacity-60"
               enterTo="transform opacity-100"
-              leave="transition ease-in duration-100"
+              leave="transition ease-in duration-200"
               leaveFrom="transform opacity-100"
               leaveTo="transform opacity-0"
-              className="flex items-center"
-              as="div"
-              key={folder.id}
             >
-              <svg
-                className="flex-shrink-0 w-5 h-5 text-gray-300"
-                fill="currentColor"
-                viewBox="0 0 20 20"
+              <Transition.Child
+                enter="transition ease-out duration-200"
+                enterFrom="transform opacity-60 translate-x-1"
+                enterTo="transform opacity-100"
+                leave="transition ease-in duration-100"
+                leaveFrom="transform opacity-100"
+                leaveTo="transform opacity-0"
+                className="flex items-center"
+                as="div"
+                key={folder.id}
               >
-                <path
-                  fillRule="evenodd"
-                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              {i === folders.length - 1 ? (
-                <span className="font-medium text-gray-900">{folder.name}</span>
-              ) : (
-                <button
-                  className="text-gray-600 hover:text-gray-900"
-                  onClick={() => handleClick(folder)}
+                <svg
+                  className="flex-shrink-0 w-5 h-5 text-gray-300"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
                 >
-                  {folder.name}
-                </button>
-              )}
-            </Transition.Child>
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                {i === folders.length - 1 ? (
+                  <span className="font-medium text-gray-900">{folder.name}</span>
+                ) : (
+                  <button
+                    className="text-gray-600 hover:text-gray-900"
+                    onClick={() => handleClick(folder)}
+                  >
+                    {folder.name}
+                  </button>
+                )}
+              </Transition.Child>
+            </Transition>
           )
         })}
       </div>
-    </Transition>
+    </Fragment>
   )
 }
 

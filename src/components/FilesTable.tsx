@@ -1,8 +1,10 @@
-import { Transition } from '@headlessui/react'
-import React from 'react'
 import { useSortBy, useTable } from 'react-table'
-import { formatBytes } from '../utils/bytesToSize'
+
+import { Connection } from '..'
 import { LoadingRow } from './LoadingTable'
+import React from 'react'
+import { Transition } from '@headlessui/react'
+import { formatBytes } from '../utils/bytesToSize'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 interface IProps {
@@ -10,9 +12,10 @@ interface IProps {
   isLoading?: boolean
   isLoadingMore?: boolean
   handleSelect: any
+  searchMode: boolean
 }
 
-const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
+const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IProps) => {
   const columns: any[] = React.useMemo(
     () => [
       {
@@ -66,7 +69,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
         Header: 'Updated',
         accessor: 'updated_at',
         Cell: ({ value }: { value: string }) => {
-          if (!value) return <span className="text-gray-900">-</span>
+          if (!value) return <span className="text-gray-900"></span>
           const date = new Date(value)
           return (
             <span className="text-gray-900 ">{`${
@@ -75,6 +78,22 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
               hour: '2-digit',
               minute: '2-digit'
             })}`}</span>
+          )
+        }
+      },
+      {
+        Header: 'Service',
+        accessor: 'connection',
+        Cell: ({ value }: { value: Connection }) => {
+          if (!value) return <span className="hidden text-gray-900">-</span>
+          return (
+            <div className="flex justify-end pr-2">
+              <img
+                className="inline-block w-5 h-5 text-right rounded-full"
+                src={value?.icon ? value.icon : '/img/logo.png'}
+                alt={value.service_id}
+              />
+            </div>
           )
         }
       }
@@ -96,52 +115,62 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
         <thead className="">
           {headerGroups.map((headerGroup: any, i: number) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={`headerGroup${i}`}>
-              {headerGroup.headers.map((column: any, i: number) => (
-                <th
-                  key={`column-${i}`}
-                  className="py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase"
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                >
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted ? (
-                      column.isSortedDesc ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="inline-block w-4 h-4 ml-2 text-gray-500"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+              {headerGroup.headers.map((column: any, i: number) => {
+                if (i === headerGroup.headers.length - 1 && !searchMode) {
+                  return null
+                }
+                return (
+                  <th
+                    key={`column-${i}`}
+                    className={`py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase ${
+                      (i === headerGroup.headers.length - 2 && !searchMode) ||
+                      (i === headerGroup.headers.length - 1 && searchMode)
+                        ? 'text-right'
+                        : ''
+                    }`}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                  >
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="inline-block w-4 h-4 ml-2 text-gray-500"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="inline-block w-4 h-4 ml-2 text-gray-500"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                        )
                       ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="inline-block w-4 h-4 ml-2 text-gray-500"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 15l7-7 7 7"
-                          />
-                        </svg>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </span>
-                </th>
-              ))}
+                        ''
+                      )}
+                    </span>
+                  </th>
+                )
+              })}
             </tr>
           ))}
         </thead>
@@ -168,7 +197,12 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
                 {row.cells.map((cell: any, i: number) => {
                   return (
                     <td
-                      className="py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap"
+                      className={`py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap ${
+                        (i === row.cells.length - 2 && !searchMode) ||
+                        (i === row.cells.length - 1 && searchMode)
+                          ? 'text-right'
+                          : ''
+                      }`}
                       style={{ maxWidth: '16rem' }}
                       {...cell.getCellProps()}
                       key={`cell-${i}`}
@@ -184,9 +218,11 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect }: IProps) => {
       </table>
       {isLoadingMore ? (
         <table className="min-w-full divide-y divide-gray-200">
-          {Array.from(Array(12).keys()).map((key) => (
-            <LoadingRow key={key} />
-          ))}
+          <tbody className="bg-white divide-y divide-gray-200">
+            {Array.from(Array(12).keys()).map((key) => (
+              <LoadingRow key={key} columns={columns} />
+            ))}
+          </tbody>
         </table>
       ) : (
         ''

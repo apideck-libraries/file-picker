@@ -1,6 +1,7 @@
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react'
 
 import Breadcrumbs from './Breadcrumbs'
+import { Connection } from '..'
 import { File } from '../types/File'
 import FileDetails from './FileDetails'
 import FilesTable from './FilesTable'
@@ -22,10 +23,6 @@ interface Props {
    */
   consumerId: string
   /**
-   * The ID of the selected connector, for example "google-drive"
-   */
-  serviceId: string
-  /**
    * The JSON Web Token returned from the Create Session call
    */
   jwt: string
@@ -33,10 +30,30 @@ interface Props {
    * The function that gets called when a file is selected
    */
   onSelect: (file: File) => any
+  /**
+   * The available (callable) connections
+   */
+  connections: Connection[]
+  /**
+   * The currently active connection
+   */
+  connection: Connection
+  /**
+   * The function to update the active connection
+   */
+  setConnection: Dispatch<SetStateAction<Connection | undefined>>
 }
 
-const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) => {
-  const [folderId, setFolderId] = useState<null | string>('root')
+const FilesContainer = ({
+  appId,
+  consumerId,
+  jwt,
+  onSelect,
+  connections,
+  connection,
+  setConnection
+}: Props) => {
+  const [folderId, setFolderId] = useState<null | string>(null)
   const [folders, setFolders] = useState<File[]>([])
   const [file, setFile] = useState<null | File>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -44,8 +61,10 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   const [isSearching, setIsSearching] = useState(false)
   const [isSearchVisible, setIsSearchVisible] = useState(false)
   const debouncedSearchTerm = useDebounce(searchTerm)
+  const serviceId = connection.service_id
   const prevServiceId = usePrevious(serviceId)
-  const searchMode = debouncedSearchTerm?.length
+  const prevFolderId = usePrevious(folderId)
+  const searchMode = !!debouncedSearchTerm?.length
   const headers = {
     'Content-Type': 'application/json',
     'x-apideck-auth-type': 'JWT',
@@ -62,16 +81,17 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
 
   const getKey = (pageIndex: number, previousPage: any) => {
     // If we switch from connector we want the folder ID to always be root
-    const id = prevServiceId && prevServiceId !== serviceId ? 'root' : folderId
+    const id = (prevServiceId && prevServiceId !== serviceId) || !folderId ? 'root' : folderId
     const filterParams = id === 'shared' ? 'filter[shared]=true' : `filter[folder_id]=${id}`
-    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}#serviceId=${serviceId}`
+    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}`
 
     if (previousPage && !previousPage?.data?.length) return null
-    if (pageIndex === 0) return fileUrl
+    if (pageIndex === 0) return `${fileUrl}#serviceId=${serviceId}`
 
     const cursor = previousPage?.meta?.cursors?.next
 
-    return `${fileUrl}&cursor=${cursor}`
+    // We add the serviceId to the end of the URL so SWR caches the request results per service
+    return `${fileUrl}&cursor=${cursor}#serviceId=${serviceId}`
   }
 
   const { data, setSize, size, error } = useSWRInfinite(getKey, fetcher, {
@@ -87,7 +107,8 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   }
 
   useEffect(() => {
-    if (prevServiceId && prevServiceId !== serviceId) {
+    // If we switch from connector we want the folder ID to always be root except when we are in search mode
+    if ((prevServiceId && prevServiceId !== serviceId && prevFolderId === folderId) || !folderId) {
       setFolderId('root')
       setFolders([])
     }
@@ -100,6 +121,10 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
         setSearchTerm('')
         setIsSearchVisible(false)
         setFolders([file])
+        // When clicking a folder in search mode, we want to change the selected connection if the folder is from a different service
+        if (file.connection?.service_id !== serviceId) {
+          setConnection(file.connection)
+        }
       } else {
         setFolders([...folders, file])
       }
@@ -129,7 +154,7 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
   let files = data?.map((page) => page?.data).flat() || []
 
   // Add Google Drive shared folder to root
-  if (folderId === 'root' && data?.length && serviceId === 'google-drive') {
+  if ((!folderId || folderId === 'root') && data?.length && serviceId === 'google-drive') {
     const sharedFolder = { id: 'shared', name: 'Shared with me', type: 'folder' }
     if (files?.length) {
       files = [sharedFolder, ...files]
@@ -142,10 +167,10 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
     if (debouncedSearchTerm?.length) {
       setIsSearching(true)
 
-      const searchFiles = async () => {
+      const searchFiles = async (serviceId: string) => {
         const url = 'https://unify.apideck.com/file-storage/files/search'
         const options = {
-          headers,
+          headers: { ...headers, 'x-apideck-service-id': serviceId },
           method: 'POST',
           body: JSON.stringify({ query: debouncedSearchTerm })
         }
@@ -154,41 +179,47 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
         return response.json()
       }
 
-      searchFiles()
-        .then((result) => {
-          setSearchResults(result.data)
+      // Search across all callable connections
+      const promises = connections.map((con) => searchFiles(con.service_id))
+
+      Promise.all(promises)
+        .then((responses) => {
+          const results = responses
+            .map((res) =>
+              res.data.map((file: File) => {
+                return {
+                  ...file,
+                  connection: connections.find((con) => con.service_id === res.service)
+                }
+              })
+            )
+            .flat()
+          setSearchResults(results)
         })
         .finally(() => setIsSearching(false))
     }
   }, [debouncedSearchTerm, serviceId])
 
-  const handleSearch = (text: string) => {
-    setSearchTerm(text)
-  }
-
   const hasFiles = searchMode ? searchResults?.length : files?.length
 
   return (
     <Fragment>
-      <div
-        className={`relative flex items-center mb-1 ${
-          folders?.length ? 'justify-between' : 'justify-end'
-        }`}
-      >
+      <div className="relative flex items-center justify-between mb-2">
         <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
         <Search
-          onChange={handleSearch}
           searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
           isSearchVisible={isSearchVisible}
           setIsSearchVisible={setIsSearchVisible}
         />
       </div>
-      {isLoading || isSearching ? <LoadingTable /> : null}
-      {!isLoading && hasFiles ? (
+      {isLoading || isSearching ? <LoadingTable isSearching={isSearching} /> : null}
+      {!isLoading && !isSearching && hasFiles && !filesError ? (
         <FilesTable
           data={searchMode && searchResults ? searchResults : files}
           handleSelect={handleSelect}
           isLoadingMore={isLoadingMore}
+          searchMode={searchMode}
         />
       ) : null}
       {!isLoading && !isSearching && !hasFiles ? (
@@ -199,8 +230,8 @@ const FilesContainer = ({ appId, consumerId, jwt, serviceId, onSelect }: Props) 
           <FileDetails file={file} setFile={setFile} onSelect={onSelect} />
         </SlideOver>
       ) : null}
-      {!isLoading && error ? (
-        <p className="text-red-600">{filesError?.message || filesError}</p>
+      {!isLoading && filesError ? (
+        <p className="mt-2 text-sm text-red-600">{filesError?.message || filesError}</p>
       ) : null}
       {files?.length && !isLoadingMore && !searchMode ? (
         <div className="flex flex-row-reverse py-4 border-gray-200">

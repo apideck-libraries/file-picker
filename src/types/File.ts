@@ -1,3 +1,5 @@
+import { Connection } from '.'
+
 export interface File {
   created_at: string
   created_by: string
@@ -12,6 +14,7 @@ export interface File {
   type: string
   updated_at: string
   updated_by: string
+  connection?: Connection
 }
 
 interface Owner {
