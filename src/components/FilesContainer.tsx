@@ -194,7 +194,15 @@ const FilesContainer = ({
               })
             )
             .flat()
-          setSearchResults(results)
+
+          // Make sure the search results of the currently active connection are first
+          const currentConnectionResults = results.filter(
+            (file) => file.connection?.service_id === connection.service_id
+          )
+          const rest = results.filter(
+            (file) => file.connection?.service_id !== connection.service_id
+          )
+          setSearchResults([...currentConnectionResults, ...rest])
         })
         .finally(() => setIsSearching(false))
     }
