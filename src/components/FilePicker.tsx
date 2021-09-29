@@ -60,7 +60,12 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const handleFileSelect = (file: File) => {
-    onSelect(file)
+    let fileToReturn = file
+    if (file.connection) {
+      const { connection, ...rest } = file
+      fileToReturn = rest
+    }
+    onSelect(fileToReturn)
     setIsOpen(false)
   }
 
