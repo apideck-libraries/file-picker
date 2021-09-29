@@ -86,7 +86,7 @@ const FilesContainer = ({
     const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}`
 
     if (previousPage && !previousPage?.data?.length) return null
-    if (pageIndex === 0) return fileUrl
+    if (pageIndex === 0) return `${fileUrl}#serviceId=${serviceId}`
 
     const cursor = previousPage?.meta?.cursors?.next
 

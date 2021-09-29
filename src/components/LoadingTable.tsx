@@ -49,7 +49,7 @@ export const LoadingTable = ({ isSearching }: Props) => {
   )
 }
 
-export const LoadingRow = ({ columns }: { isSearching?: boolean; columns: any[] }) => {
+export const LoadingRow = ({ columns }: { columns: any[] }) => {
   return (
     <tr>
       {columns.map((_, i) => (

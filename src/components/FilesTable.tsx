@@ -80,31 +80,26 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IPro
             })}`}</span>
           )
         }
+      },
+      {
+        Header: 'Service',
+        accessor: 'connection',
+        Cell: ({ value }: { value: Connection }) => {
+          if (!value) return <span className="hidden text-gray-900">-</span>
+          return (
+            <div className="flex justify-end pr-2">
+              <img
+                className="inline-block w-5 h-5 text-right rounded-full"
+                src={value?.icon ? value.icon : '/img/logo.png'}
+                alt={value.service_id}
+              />
+            </div>
+          )
+        }
       }
     ],
     []
   )
-
-  if (searchMode) {
-    columns.push({
-      Header: 'Service',
-      accessor: 'connection',
-      Cell: ({ value }: { value: Connection }) => {
-        if (!value) return <span className="text-gray-900">-</span>
-        return (
-          <div className="flex justify-end pr-2">
-            <img
-              className="inline-block w-5 h-5 text-right rounded-full"
-              src={value?.icon ? value.icon : '/img/logo.png'}
-              alt={value.service_id}
-            />
-          </div>
-        )
-      }
-    })
-  } else if (columns[columns.length - 1].accessor === 'connection') {
-    columns.splice(-1)
-  }
 
   const { getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
     {
@@ -120,54 +115,62 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IPro
         <thead className="">
           {headerGroups.map((headerGroup: any, i: number) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={`headerGroup${i}`}>
-              {headerGroup.headers.map((column: any, i: number) => (
-                <th
-                  key={`column-${i}`}
-                  className={`py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase ${
-                    i === headerGroup.headers.length - 1 ? 'text-right' : ''
-                  }`}
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                >
-                  {column.render('Header')}
-                  <span>
-                    {column.isSorted ? (
-                      column.isSortedDesc ? (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="inline-block w-4 h-4 ml-2 text-gray-500"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
+              {headerGroup.headers.map((column: any, i: number) => {
+                if (i === headerGroup.headers.length - 1 && !searchMode) {
+                  return null
+                }
+                return (
+                  <th
+                    key={`column-${i}`}
+                    className={`py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase ${
+                      (i === headerGroup.headers.length - 2 && !searchMode) ||
+                      (i === headerGroup.headers.length - 1 && searchMode)
+                        ? 'text-right'
+                        : ''
+                    }`}
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                  >
+                    {column.render('Header')}
+                    <span>
+                      {column.isSorted ? (
+                        column.isSortedDesc ? (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="inline-block w-4 h-4 ml-2 text-gray-500"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            className="inline-block w-4 h-4 ml-2 text-gray-500"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 15l7-7 7 7"
+                            />
+                          </svg>
+                        )
                       ) : (
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          className="inline-block w-4 h-4 ml-2 text-gray-500"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 15l7-7 7 7"
-                          />
-                        </svg>
-                      )
-                    ) : (
-                      ''
-                    )}
-                  </span>
-                </th>
-              ))}
+                        ''
+                      )}
+                    </span>
+                  </th>
+                )
+              })}
             </tr>
           ))}
         </thead>
@@ -195,7 +198,10 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IPro
                   return (
                     <td
                       className={`py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap ${
-                        i === row.cells.length - 1 ? 'text-right' : ''
+                        (i === row.cells.length - 2 && !searchMode) ||
+                        (i === row.cells.length - 1 && searchMode)
+                          ? 'text-right'
+                          : ''
                       }`}
                       style={{ maxWidth: '16rem' }}
                       {...cell.getCellProps()}
