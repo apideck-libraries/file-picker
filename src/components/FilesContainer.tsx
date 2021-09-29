@@ -64,7 +64,7 @@ const FilesContainer = ({
   const serviceId = connection.service_id
   const prevServiceId = usePrevious(serviceId)
   const prevFolderId = usePrevious(folderId)
-  const searchMode = debouncedSearchTerm?.length
+  const searchMode = !!debouncedSearchTerm?.length
   const headers = {
     'Content-Type': 'application/json',
     'x-apideck-auth-type': 'JWT',
@@ -83,14 +83,15 @@ const FilesContainer = ({
     // If we switch from connector we want the folder ID to always be root
     const id = prevServiceId && prevServiceId !== serviceId ? 'root' : folderId
     const filterParams = id === 'shared' ? 'filter[shared]=true' : `filter[folder_id]=${id}`
-    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}#serviceId=${serviceId}`
+    const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}`
 
     if (previousPage && !previousPage?.data?.length) return null
     if (pageIndex === 0) return fileUrl
 
     const cursor = previousPage?.meta?.cursors?.next
 
-    return `${fileUrl}&cursor=${cursor}`
+    // We add the serviceId to the end of the URL so SWR caches the request results per service
+    return `${fileUrl}&cursor=${cursor}#serviceId=${serviceId}`
   }
 
   const { data, setSize, size, error } = useSWRInfinite(getKey, fetcher, {
@@ -199,10 +200,6 @@ const FilesContainer = ({
     }
   }, [debouncedSearchTerm, serviceId])
 
-  const handleSearch = (text: string) => {
-    setSearchTerm(text)
-  }
-
   const hasFiles = searchMode ? searchResults?.length : files?.length
 
   return (
@@ -214,19 +211,19 @@ const FilesContainer = ({
       >
         <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
         <Search
-          onChange={handleSearch}
           searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
           isSearchVisible={isSearchVisible}
           setIsSearchVisible={setIsSearchVisible}
         />
       </div>
-      {isLoading || isSearching ? <LoadingTable /> : null}
+      {isLoading || isSearching ? <LoadingTable isSearching={isSearching} /> : null}
       {!isLoading && !isSearching && hasFiles && !filesError ? (
         <FilesTable
           data={searchMode && searchResults ? searchResults : files}
           handleSelect={handleSelect}
           isLoadingMore={isLoadingMore}
-          hasSearchResults={!!searchResults?.length}
+          searchMode={searchMode}
         />
       ) : null}
       {!isLoading && !isSearching && !hasFiles ? (

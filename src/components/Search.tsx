@@ -1,18 +1,18 @@
 import React, { ChangeEvent, Dispatch, SetStateAction, useRef } from 'react'
 
 export interface Props {
-  onChange: any
   searchTerm: string
+  setSearchTerm: Dispatch<SetStateAction<string>>
   isSearchVisible: boolean
   setIsSearchVisible: Dispatch<SetStateAction<boolean>>
 }
 
-const Search = ({ onChange, searchTerm, isSearchVisible, setIsSearchVisible }: Props) => {
+const Search = ({ setSearchTerm, searchTerm, isSearchVisible, setIsSearchVisible }: Props) => {
   const inputEl = useRef(null) as any
 
   const handleClick = () => {
     if (isSearchVisible) {
-      onChange('')
+      setSearchTerm('')
       setIsSearchVisible(false)
     } else {
       setIsSearchVisible(true)
@@ -48,7 +48,7 @@ const Search = ({ onChange, searchTerm, isSearchVisible, setIsSearchVisible }: P
             placeholder="Search"
             autoComplete="off"
             ref={inputEl}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(event.target.value)}
+            onChange={(event: ChangeEvent<HTMLInputElement>) => setSearchTerm(event.target.value)}
             value={searchTerm}
           />
         </div>

@@ -73,6 +73,8 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setConnection, callableConnections])
 
+  const modalHeight = document.getElementById('modal-component')?.clientHeight
+
   return (
     <div className="-m-6 bg-white sm:rounded-lg h-modal" style={{ height: '34rem' }}>
       <div className="flex items-center justify-between px-4 py-5 sm:px-6">
@@ -98,7 +100,10 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
       </div>
       <div
         className="px-4 py-5 overflow-y-auto border-t border-gray-200 sm:px-6"
-        style={{ height: 'calc(100% - 80px)' }}
+        style={{
+          height:
+            typeof window !== 'undefined' && modalHeight ? modalHeight - 70 : 'calc(100% - 70px)'
+        }}
       >
         {connection ? (
           <FilesContainer

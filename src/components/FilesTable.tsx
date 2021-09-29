@@ -1,5 +1,6 @@
 import { useSortBy, useTable } from 'react-table'
 
+import { Connection } from '..'
 import { LoadingRow } from './LoadingTable'
 import React from 'react'
 import { Transition } from '@headlessui/react'
@@ -11,10 +12,10 @@ interface IProps {
   isLoading?: boolean
   isLoadingMore?: boolean
   handleSelect: any
-  hasSearchResults: boolean
+  searchMode: boolean
 }
 
-const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }: IProps) => {
+const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IProps) => {
   const columns: any[] = React.useMemo(
     () => [
       {
@@ -68,7 +69,7 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }
         Header: 'Updated',
         accessor: 'updated_at',
         Cell: ({ value }: { value: string }) => {
-          if (!value) return <span className="text-gray-900">-</span>
+          if (!value) return <span className="text-gray-900"></span>
           const date = new Date(value)
           return (
             <span className="text-gray-900 ">{`${
@@ -84,14 +85,14 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }
     []
   )
 
-  if (hasSearchResults) {
+  if (searchMode) {
     columns.push({
-      Header: () => <div className="text-right">Service</div>,
+      Header: 'Service',
       accessor: 'connection',
       Cell: ({ value }: { value: Connection }) => {
         if (!value) return <span className="text-gray-900">-</span>
         return (
-          <div className="flex justify-end">
+          <div className="flex justify-end pr-2">
             <img
               className="inline-block w-5 h-5 text-right rounded-full"
               src={value?.icon ? value.icon : '/img/logo.png'}
@@ -101,6 +102,8 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }
         )
       }
     })
+  } else if (columns[columns.length - 1].accessor === 'connection') {
+    columns.splice(-1)
   }
 
   const { getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
@@ -120,7 +123,9 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }
               {headerGroup.headers.map((column: any, i: number) => (
                 <th
                   key={`column-${i}`}
-                  className="py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase"
+                  className={`py-3 pr-2 space-x-6 text-xs font-medium tracking-wide text-left text-gray-500 uppercase ${
+                    i === headerGroup.headers.length - 1 ? 'text-right' : ''
+                  }`}
                   {...column.getHeaderProps(column.getSortByToggleProps())}
                 >
                   {column.render('Header')}
@@ -207,9 +212,11 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, hasSearchResults }
       </table>
       {isLoadingMore ? (
         <table className="min-w-full divide-y divide-gray-200">
-          {Array.from(Array(12).keys()).map((key) => (
-            <LoadingRow key={key} />
-          ))}
+          <tbody className="bg-white divide-y divide-gray-200">
+            {Array.from(Array(12).keys()).map((key) => (
+              <LoadingRow key={key} columns={columns} />
+            ))}
+          </tbody>
         </table>
       ) : (
         ''
