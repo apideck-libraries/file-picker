@@ -53,7 +53,7 @@ const FilesContainer = ({
   connection,
   setConnection
 }: Props) => {
-  const [folderId, setFolderId] = useState<null | string>('root')
+  const [folderId, setFolderId] = useState<null | string>(null)
   const [folders, setFolders] = useState<File[]>([])
   const [file, setFile] = useState<null | File>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -81,7 +81,7 @@ const FilesContainer = ({
 
   const getKey = (pageIndex: number, previousPage: any) => {
     // If we switch from connector we want the folder ID to always be root
-    const id = prevServiceId && prevServiceId !== serviceId ? 'root' : folderId
+    const id = (prevServiceId && prevServiceId !== serviceId) || !folderId ? 'root' : folderId
     const filterParams = id === 'shared' ? 'filter[shared]=true' : `filter[folder_id]=${id}`
     const fileUrl = `https://unify.apideck.com/file-storage/files?limit=30&${filterParams}`
 
@@ -108,7 +108,7 @@ const FilesContainer = ({
 
   useEffect(() => {
     // If we switch from connector we want the folder ID to always be root except when we are in search mode
-    if (prevServiceId && prevServiceId !== serviceId && prevFolderId === folderId) {
+    if ((prevServiceId && prevServiceId !== serviceId && prevFolderId === folderId) || !folderId) {
       setFolderId('root')
       setFolders([])
     }
@@ -154,7 +154,7 @@ const FilesContainer = ({
   let files = data?.map((page) => page?.data).flat() || []
 
   // Add Google Drive shared folder to root
-  if (folderId === 'root' && data?.length && serviceId === 'google-drive') {
+  if ((!folderId || folderId === 'root') && data?.length && serviceId === 'google-drive') {
     const sharedFolder = { id: 'shared', name: 'Shared with me', type: 'folder' }
     if (files?.length) {
       files = [sharedFolder, ...files]
@@ -204,11 +204,7 @@ const FilesContainer = ({
 
   return (
     <Fragment>
-      <div
-        className={`relative flex items-center mb-1 ${
-          folders?.length ? 'justify-between' : 'justify-end'
-        }`}
-      >
+      <div className="relative flex items-center justify-between mb-2">
         <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
         <Search
           searchTerm={searchTerm}
