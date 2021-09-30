@@ -45,10 +45,12 @@ const MyComponent = () => {
 | consumerId      | string  | true     | -                   | The ID of the consumer which you want to fetch files from        |
 | jwt             | string  | true     | -                   | The JSON Web Token returned from the Create Session call         |
 | onSelect        | event   | true     | -                   | The function that gets called when a file is selected            |
-| trigger         | element | true     | -                   | The component that should trigger the File Picker modal on click |
+| trigger         | element | false    | -                   | The component that should trigger the File Picker modal on click |
 | title           | string  | false    | Apideck File Picker | Title shown in the modal                                         |
 | subTitle        | string  | false    | Select a file       | Subtitle shown in the modal                                      |
 | showAttribution | boolean | false    | true                | Show "Powered by Apideck" in the backdrop of the modal backdrop  |
+| open            | boolean | false    | false               | Opens the file picker if set to true                             |
+| onClose         | event   | false    |                     | Function that gets called when the modal is closed               |
 
 ### Using Tailwind?
 

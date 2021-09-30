@@ -1,4 +1,11 @@
-import React, { Fragment, ReactElement, createContext, forwardRef, useState } from 'react'
+import React, {
+  Fragment,
+  ReactElement,
+  createContext,
+  forwardRef,
+  useEffect,
+  useState
+} from 'react'
 
 import { File } from '../types/File'
 import { Modal } from './Modal'
@@ -18,13 +25,13 @@ export interface Props {
    */
   jwt: string
   /**
-   * The component that should trigger the File Picker modal on click
-   */
-  trigger: ReactElement
-  /**
    * The function that gets called when a file is selected
    */
   onSelect: (file: File) => any
+  /**
+   * The component that should trigger the File Picker modal on click
+   */
+  trigger?: ReactElement
   /**
    * Title shown in the modal
    */
@@ -37,6 +44,14 @@ export interface Props {
    * Show powered by Apideck in the modal backdrop
    */
   showAttribution?: boolean
+  /**
+   * Opens the file picker if set to true
+   */
+  open?: boolean
+  /**
+   * Callback function that gets called when the modal is closed
+   */
+  onClose?: () => any
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
@@ -53,7 +68,9 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     onSelect,
     title = 'Apideck File Picker',
     subTitle = 'Select a file',
-    showAttribution = true
+    showAttribution = true,
+    open = false,
+    onClose
   },
   ref
 ) {
@@ -66,13 +83,26 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
       fileToReturn = rest
     }
     onSelect(fileToReturn)
-    setIsOpen(false)
+    onCloseModal()
   }
+
+  const onCloseModal = () => {
+    setIsOpen(false)
+    if (onClose) {
+      onClose()
+    }
+  }
+
+  useEffect(() => {
+    if (open) {
+      setIsOpen(true)
+    }
+  }, [open])
 
   return (
     <Fragment>
-      {React.cloneElement(trigger, { onClick: () => setIsOpen(true), ref })}
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} showAttribution={showAttribution}>
+      {trigger ? React.cloneElement(trigger, { onClick: () => setIsOpen(true), ref }) : null}
+      <Modal isOpen={isOpen} onClose={() => onCloseModal()} showAttribution={showAttribution}>
         <ModalContent
           appId={appId}
           consumerId={consumerId}
