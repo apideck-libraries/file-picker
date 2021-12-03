@@ -52,6 +52,11 @@ export interface Props {
    * Callback function that gets called when the modal is closed
    */
   onClose?: () => any
+  /**
+   * File to save. Forces the FilePicker to go in "Upload" mode and only
+   * allows to change the file name and select the folder to upload the provided file to
+   */
+  fileToSave: File
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
@@ -70,7 +75,8 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     subTitle = 'Select a file',
     showAttribution = true,
     open = false,
-    onClose
+    onClose,
+    fileToSave
   },
   ref
 ) {
@@ -110,6 +116,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
           onSelect={handleFileSelect}
           title={title}
           subTitle={subTitle}
+          fileToSave={fileToSave}
         />
       </Modal>
     </Fragment>

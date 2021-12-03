@@ -31,12 +31,24 @@ export interface Props {
    * Subtitle shown in the modal
    */
   subTitle?: string
+  /**
+   * File to save. Forces the FilePicker to go in "Upload" mode and select the folder to upload the provided file
+   */
+  fileToSave: File
 }
 
 /**
  * The Apideck File Picker
  */
-export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, title, subTitle }) => {
+export const ModalContent: FC<Props> = ({
+  appId,
+  consumerId,
+  jwt,
+  onSelect,
+  title,
+  subTitle,
+  fileToSave
+}) => {
   const [connection, setConnection] = useState<Connection>()
 
   const getConnections = async (url: string) => {
@@ -76,7 +88,7 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
   const modalHeight = document.getElementById('modal-component')?.clientHeight
 
   return (
-    <div className="-m-6 bg-white sm:rounded-lg h-modal" style={{ height: '34rem' }}>
+    <div className="relative -m-6 bg-white sm:rounded-lg h-modal" style={{ height: '34rem' }}>
       <div className="flex items-center justify-between px-4 py-5 sm:px-6">
         <div>
           <h3 className="text-lg font-medium leading-6 text-gray-900">{title}</h3>
@@ -114,6 +126,7 @@ export const ModalContent: FC<Props> = ({ appId, consumerId, jwt, onSelect, titl
             connections={callableConnections}
             connection={connection}
             setConnection={setConnection}
+            fileToSave={fileToSave}
           />
         ) : !callableConnections?.length && !isLoading ? (
           <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96">

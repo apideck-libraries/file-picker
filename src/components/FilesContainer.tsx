@@ -1,4 +1,4 @@
-import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
 import Breadcrumbs from './Breadcrumbs'
 import { Connection } from '..'
@@ -45,6 +45,10 @@ interface Props {
    * The function to update the active connection
    */
   setConnection: Dispatch<SetStateAction<Connection | undefined>>
+  /**
+   * File to save. Forces the FilePicker to go in "Upload" mode and select the folder to upload the provided file
+   */
+  fileToSave: File
 }
 
 const FilesContainer = ({
@@ -189,8 +193,8 @@ const FilesContainer = ({
       Promise.all(promises)
         .then((responses) => {
           const results = responses
-            .map((res) =>
-              res.data.map((file: File) => {
+            ?.map((res) =>
+              res.data?.map((file: File) => {
                 return {
                   ...file,
                   connection: connections.find((con) => con.service_id === res.service)
@@ -225,15 +229,17 @@ const FilesContainer = ({
             isSearchVisible={isSearchVisible}
             setIsSearchVisible={setIsSearchVisible}
           />
-          <UploadButton
-            file={fileToSave}
-            consumerId={consumerId}
-            jwt={jwt}
-            folderId={folderId}
-            serviceId={serviceId}
-            appId={appId}
-            onSuccess={mutate}
-          />
+          {!fileToSave ? (
+            <UploadButton
+              file={fileToSave}
+              consumerId={consumerId}
+              jwt={jwt}
+              folderId={folderId}
+              serviceId={serviceId}
+              appId={appId}
+              onSuccess={mutate}
+            />
+          ) : null}
         </div>
       </div>
       {isLoading || isSearching ? <LoadingTable isSearching={isSearching} /> : null}
@@ -243,6 +249,7 @@ const FilesContainer = ({
           handleSelect={handleSelect}
           isLoadingMore={isLoadingMore}
           searchMode={searchMode}
+          uploadingMode={!!fileToSave}
         />
       ) : null}
       {!isLoading && !isSearching && !hasFiles ? (
@@ -261,6 +268,17 @@ const FilesContainer = ({
           <Waypoint onEnter={() => nextPage()} />
         </div>
       ) : null}
+      {fileToSave && (
+        <SaveFileForm
+          file={fileToSave}
+          appId={appId}
+          consumerId={consumerId}
+          jwt={jwt}
+          folderId={folderId}
+          serviceId={serviceId}
+          onSuccess={onSelect}
+        />
+      )}
     </ToastProvider>
   )
 }

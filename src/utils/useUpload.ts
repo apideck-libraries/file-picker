@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useToast } from './useToast'
 
 interface Props {
-  onSuccess: () => void
+  onSuccess: (response?: any) => void
 }
 
 interface UploadFileProps {
@@ -55,21 +55,30 @@ export const useUpload = ({ onSuccess }: Props) => {
       } else {
         addToast({
           title: 'File uploaded',
-          description: 'You can now select it in the list',
+          description: 'File successfully uploaded',
           type: 'success',
           autoClose: true
         })
-        onSuccess()
+        const fileDetails = await getFile(headers, response.data.id)
+        onSuccess(fileDetails?.data || file)
       }
-    } catch (error: any) {
+    } catch (error) {
       addToast({
         title: 'Something went wrong',
-        description: error?.message || error,
+        description: error as string,
         type: 'error'
       })
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const getFile = async (headers: any, fileId: string) => {
+    const raw = await fetch(`https://unify.apideck.com/file-storage/files/${fileId}`, {
+      headers
+    })
+    const response = await raw.json()
+    return response
   }
 
   return { uploadFile, isLoading }

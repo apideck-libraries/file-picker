@@ -13,9 +13,16 @@ interface IProps {
   isLoadingMore?: boolean
   handleSelect: any
   searchMode: boolean
+  uploadingMode: boolean
 }
 
-const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IProps) => {
+const FilesTable = ({
+  data = [],
+  isLoadingMore,
+  handleSelect,
+  searchMode,
+  uploadingMode
+}: IProps) => {
   const columns: any[] = React.useMemo(
     () => [
       {
@@ -69,12 +76,12 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IPro
         Header: 'Updated',
         accessor: 'updated_at',
         Cell: ({ value }: { value: string }) => {
-          if (!value) return <span className="text-gray-900"></span>
+          if (!value) return <span></span>
           const date = new Date(value)
           return (
-            <span className="text-gray-900 ">{`${
-              months[date.getMonth()]
-            } ${date.getDay()}, ${new Date(value).toLocaleTimeString([], {
+            <span>{`${months[date.getMonth()]} ${date.getDay()}, ${new Date(
+              value
+            ).toLocaleTimeString([], {
               hour: '2-digit',
               minute: '2-digit'
             })}`}</span>
@@ -191,13 +198,21 @@ const FilesTable = ({ data = [], isLoadingMore, handleSelect, searchMode }: IPro
                 as="tr"
                 {...row.getRowProps()}
                 key={`row-${i}`}
-                className="cursor-pointer hover:bg-gray-50"
-                onClick={() => handleSelect(row.original)}
+                className={`${
+                  uploadingMode && row.original.type === 'file'
+                    ? 'text-gray-300'
+                    : 'cursor-pointer hover:bg-gray-50 text-gray-900'
+                }`}
+                onClick={() => {
+                  if (!uploadingMode || row.original.type === 'folder') {
+                    handleSelect(row.original)
+                  }
+                }}
               >
                 {row.cells.map((cell: any, i: number) => {
                   return (
                     <td
-                      className={`py-3 space-x-6 text-xs text-gray-900 truncate max-w-2xs whitespace-nowrap ${
+                      className={`py-3 space-x-6 text-xs truncate max-w-2xs whitespace-nowrap ${
                         (i === row.cells.length - 2 && !searchMode) ||
                         (i === row.cells.length - 1 && searchMode)
                           ? 'text-right'
