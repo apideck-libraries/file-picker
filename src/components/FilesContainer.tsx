@@ -6,8 +6,11 @@ import { File } from '../types/File'
 import FileDetails from './FileDetails'
 import FilesTable from './FilesTable'
 import LoadingTable from './LoadingTable'
+import SaveFileForm from './SaveFileForm'
 import Search from './Search'
 import SlideOver from './SlideOver'
+import { ToastProvider } from '../utils/useToast'
+import UploadButton from './UploadButton'
 import { Waypoint } from 'react-waypoint'
 import { useDebounce } from '../utils/useDebounce'
 import { usePrevious } from '../utils/usePrevious'
@@ -51,7 +54,8 @@ const FilesContainer = ({
   onSelect,
   connections,
   connection,
-  setConnection
+  setConnection,
+  fileToSave
 }: Props) => {
   const [folderId, setFolderId] = useState<null | string>(null)
   const [folders, setFolders] = useState<File[]>([])
@@ -94,7 +98,7 @@ const FilesContainer = ({
     return `${fileUrl}&cursor=${cursor}#serviceId=${serviceId}`
   }
 
-  const { data, setSize, size, error } = useSWRInfinite(getKey, fetcher, {
+  const { data, setSize, size, error, mutate } = useSWRInfinite(getKey, fetcher, {
     shouldRetryOnError: false
   })
 
@@ -211,15 +215,26 @@ const FilesContainer = ({
   const hasFiles = searchMode ? searchResults?.length : files?.length
 
   return (
-    <Fragment>
+    <ToastProvider>
       <div className="relative flex items-center justify-between mb-2">
         <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
-        <Search
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          isSearchVisible={isSearchVisible}
-          setIsSearchVisible={setIsSearchVisible}
-        />
+        <div className="flex items-center space-x-2">
+          <Search
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            isSearchVisible={isSearchVisible}
+            setIsSearchVisible={setIsSearchVisible}
+          />
+          <UploadButton
+            file={fileToSave}
+            consumerId={consumerId}
+            jwt={jwt}
+            folderId={folderId}
+            serviceId={serviceId}
+            appId={appId}
+            onSuccess={mutate}
+          />
+        </div>
       </div>
       {isLoading || isSearching ? <LoadingTable isSearching={isSearching} /> : null}
       {!isLoading && !isSearching && hasFiles && !filesError ? (
@@ -246,7 +261,7 @@ const FilesContainer = ({
           <Waypoint onEnter={() => nextPage()} />
         </div>
       ) : null}
-    </Fragment>
+    </ToastProvider>
   )
 }
 
