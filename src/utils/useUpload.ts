@@ -33,7 +33,7 @@ export const useUpload = ({ onSuccess }: Props) => {
       'x-apideck-service-id': serviceId,
       'x-apideck-metadata': JSON.stringify({
         name: file.name,
-        parent_folder_id: folderId === 'root' ? '0' : folderId
+        parent_folder_id: folderId
       }),
       Authorization: `Bearer ${jwt}`
     }
