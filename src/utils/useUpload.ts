@@ -10,7 +10,7 @@ interface UploadFileProps {
   appId: string
   consumerId: string
   serviceId: string
-  folderId: string
+  folderId: string | null
   jwt: string
 }
 

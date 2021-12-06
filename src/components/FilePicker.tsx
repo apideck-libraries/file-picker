@@ -71,8 +71,8 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     jwt,
     trigger,
     onSelect,
-    title = 'Apideck File Picker',
-    subTitle = 'Select a file',
+    title,
+    subTitle,
     showAttribution = true,
     open = false,
     onClose,
@@ -114,8 +114,8 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
           consumerId={consumerId}
           jwt={jwt}
           onSelect={handleFileSelect}
-          title={title}
-          subTitle={subTitle}
+          title={title ? title : fileToSave ? 'Apideck File Uploader' : 'Apideck File Picker'}
+          subTitle={subTitle ? subTitle : fileToSave ? 'Select a folder' : 'Select a file'}
           fileToSave={fileToSave}
         />
       </Modal>

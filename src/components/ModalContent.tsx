@@ -4,6 +4,7 @@ import { Connection } from '../types/Connection'
 import { File } from '../types/File'
 import FilesContainer from './FilesContainer'
 import SelectConnection from './SelectConnection'
+import { ToastProvider } from '../utils/useToast'
 import useSWR from 'swr'
 
 export interface Props {
@@ -118,16 +119,18 @@ export const ModalContent: FC<Props> = ({
         }}
       >
         {connection ? (
-          <FilesContainer
-            appId={appId}
-            consumerId={consumerId}
-            jwt={jwt}
-            onSelect={onSelect}
-            connections={callableConnections}
-            connection={connection}
-            setConnection={setConnection}
-            fileToSave={fileToSave}
-          />
+          <ToastProvider>
+            <FilesContainer
+              appId={appId}
+              consumerId={consumerId}
+              jwt={jwt}
+              onSelect={onSelect}
+              connections={callableConnections}
+              connection={connection}
+              setConnection={setConnection}
+              fileToSave={fileToSave}
+            />
+          </ToastProvider>
         ) : !callableConnections?.length && !isLoading ? (
           <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96">
             <div className="text-center">

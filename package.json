@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.4.1",
+    "react-dropzone": "^11.4.2",
     "react-table": "^7.7.0",
     "react-waypoint": "^10.1.0",
     "swr": "^1.0.0"
@@ -66,6 +67,7 @@
     "@storybook/addon-postcss": "^2.0.0",
     "@storybook/addons": "^6.3.8",
     "@storybook/react": "^6.3.8",
+    "@types/dropzone": "^5.7.4",
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "@types/react-table": "^7.7.2",

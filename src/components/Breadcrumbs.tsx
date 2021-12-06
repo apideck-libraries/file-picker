@@ -38,6 +38,7 @@ const Breadcrumbs = ({ folders, handleClick }: Props) => {
               leave="transition ease-in duration-200"
               leaveFrom="transform opacity-100"
               leaveTo="transform opacity-0"
+              key={i}
             >
               <Transition.Child
                 enter="transition ease-out duration-200"

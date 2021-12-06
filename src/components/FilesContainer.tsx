@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, { Dispatch, Fragment, SetStateAction, useEffect, useState } from 'react'
 
 import Breadcrumbs from './Breadcrumbs'
 import { Connection } from '..'
@@ -9,12 +9,14 @@ import LoadingTable from './LoadingTable'
 import SaveFileForm from './SaveFileForm'
 import Search from './Search'
 import SlideOver from './SlideOver'
-import { ToastProvider } from '../utils/useToast'
+import Spinner from './Spinner'
 import UploadButton from './UploadButton'
 import { Waypoint } from 'react-waypoint'
 import { useDebounce } from '../utils/useDebounce'
+import { useDropzone } from 'react-dropzone'
 import { usePrevious } from '../utils/usePrevious'
 import useSWRInfinite from 'swr/infinite'
+import { useUpload } from '../utils/useUpload'
 
 interface Props {
   /**
@@ -106,6 +108,17 @@ const FilesContainer = ({
     shouldRetryOnError: false
   })
 
+  const { uploadFile, isLoading: isUploading } = useUpload({ onSuccess: mutate })
+
+  const onDrop = async (acceptedFiles: any) => {
+    await uploadFile({ file: acceptedFiles[0], folderId, appId, consumerId, serviceId, jwt })
+    const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')?.style
+    if (dropzoneElement?.visibility) dropzoneElement.visibility = 'hidden'
+    if (dropzoneElement?.opacity) dropzoneElement.opacity = '0'
+  }
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+
   const nextPage = () => {
     const nextCursor = data?.length && data[data.length - 1]?.meta?.cursors?.next
 
@@ -113,6 +126,38 @@ const FilesContainer = ({
       setSize(size + 1)
     }
   }
+
+  useEffect(() => {
+    let lastTarget: EventTarget | null = null
+
+    const onEnter = (e: DragEvent) => {
+      lastTarget = e.target // cache the last target here
+      const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')?.style
+      if (dropzoneElement?.visibility) dropzoneElement.visibility = 'visible'
+      if (dropzoneElement?.opacity) dropzoneElement.opacity = '1'
+    }
+
+    const onLeave = (e: DragEvent) => {
+      if (e.target === lastTarget || e.target === document) {
+        const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')?.style
+        if (dropzoneElement?.visibility) dropzoneElement.visibility = 'hidden'
+        if (dropzoneElement?.opacity) dropzoneElement.opacity = '0'
+      }
+    }
+
+    const addDragListeners = () => {
+      window.addEventListener('dragenter', onEnter)
+      window.addEventListener('dragleave', onLeave)
+    }
+
+    const cleanupListeners = () => {
+      window.removeEventListener('dragenter', onEnter)
+      window.removeEventListener('dragleave', onLeave)
+    }
+
+    addDragListeners()
+    return cleanupListeners()
+  }, [])
 
   useEffect(() => {
     // If we switch from connector we want the folder ID to always be root except when we are in search mode
@@ -159,7 +204,7 @@ const FilesContainer = ({
   const isLoading = !data && !error
   const isLoadingMore = size > 0 && data && typeof data[size - 1] === 'undefined'
 
-  let files = data?.map((page) => page?.data).flat() || []
+  let files = data?.length ? data.map((page) => page?.data).flat() : data ? [data] : []
 
   // Add Google Drive shared folder to root
   if ((!folderId || folderId === 'root') && data?.length && serviceId === 'google-drive') {
@@ -219,7 +264,7 @@ const FilesContainer = ({
   const hasFiles = searchMode ? searchResults?.length : files?.length
 
   return (
-    <ToastProvider>
+    <Fragment>
       <div className="relative flex items-center justify-between mb-2">
         <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
         <div className="flex items-center space-x-2">
@@ -243,7 +288,46 @@ const FilesContainer = ({
         </div>
       </div>
       {isLoading || isSearching ? <LoadingTable isSearching={isSearching} /> : null}
-      {!isLoading && !isSearching && hasFiles && !filesError ? (
+      <div {...getRootProps()} className="relative">
+        <input {...getInputProps()} />
+        {isDragActive || isUploading ? (
+          <div className="flex justify-center px-6 py-24 mt-4 border-2 border-gray-300 border-dashed rounded-md">
+            {isUploading ? (
+              <Spinner className="w-6 h-6 text-gray-500" />
+            ) : (
+              <div className="space-y-1 text-center">
+                <svg
+                  className="w-12 h-12 mx-auto text-gray-400"
+                  stroke="currentColor"
+                  fill="none"
+                  viewBox="0 0 48 48"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <div className="flex text-sm text-gray-600">
+                  <label htmlFor="file-upload" className="relative bg-white rounded-md">
+                    <span>Drop here to upload to</span>
+                    <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                  </label>
+                  <p className="pl-1 font-medium text-indigo-600">{connection.name}</p>
+                </div>
+                <p className="text-xs text-gray-500">
+                  {folders.length ? `Folder: ${folders[folders.length - 1]?.name}` : 'Root folder'}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="absolute inset-0 invisible w-full h-96 dropzone" />
+        )}
+      </div>
+      {!isLoading && !isSearching && hasFiles && !filesError && !isDragActive && !isUploading ? (
         <FilesTable
           data={searchMode && searchResults ? searchResults : files}
           handleSelect={handleSelect}
@@ -279,7 +363,7 @@ const FilesContainer = ({
           onSuccess={onSelect}
         />
       )}
-    </ToastProvider>
+    </Fragment>
   )
 }
 
