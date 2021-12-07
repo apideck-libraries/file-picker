@@ -56,7 +56,7 @@ export interface Props {
    * File to save. Forces the FilePicker to go in "Upload" mode and only
    * allows to change the file name and select the folder to upload the provided file to
    */
-  fileToSave?: File
+  fileToSave?: File | any
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
@@ -88,7 +88,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
       const { connection, ...rest } = file
       fileToReturn = rest
     }
-    onSelect(fileToReturn)
+    if (onSelect) onSelect(fileToReturn)
     onCloseModal()
   }
 
