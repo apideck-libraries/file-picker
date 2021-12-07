@@ -52,6 +52,11 @@ export interface Props {
    * Callback function that gets called when the modal is closed
    */
   onClose?: () => any
+  /**
+   * File to save. Forces the FilePicker to go in "Upload" mode and only
+   * allows to change the file name and select the folder to upload the provided file to
+   */
+  fileToSave: File
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
@@ -66,11 +71,12 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     jwt,
     trigger,
     onSelect,
-    title = 'Apideck File Picker',
-    subTitle = 'Select a file',
+    title,
+    subTitle,
     showAttribution = true,
     open = false,
-    onClose
+    onClose,
+    fileToSave
   },
   ref
 ) {
@@ -108,8 +114,9 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
           consumerId={consumerId}
           jwt={jwt}
           onSelect={handleFileSelect}
-          title={title}
-          subTitle={subTitle}
+          title={title ? title : fileToSave ? 'Apideck File Uploader' : 'Apideck File Picker'}
+          subTitle={subTitle ? subTitle : fileToSave ? 'Select a folder' : 'Select a file'}
+          fileToSave={fileToSave}
         />
       </Modal>
     </Fragment>
