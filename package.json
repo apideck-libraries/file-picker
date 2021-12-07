@@ -50,11 +50,11 @@
   "size-limit": [
     {
       "path": "dist/file-picker.cjs.production.min.js",
-      "limit": "60 KB"
+      "limit": "100 KB"
     },
     {
       "path": "dist/file-picker.esm.js",
-      "limit": "60 KB"
+      "limit": "100 KB"
     }
   ],
   "devDependencies": {

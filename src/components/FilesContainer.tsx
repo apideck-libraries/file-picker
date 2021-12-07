@@ -112,9 +112,9 @@ const FilesContainer = ({
 
   const onDrop = async (acceptedFiles: any) => {
     await uploadFile({ file: acceptedFiles[0], folderId, appId, consumerId, serviceId, jwt })
-    const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')?.style
-    if (dropzoneElement?.visibility) dropzoneElement.visibility = 'hidden'
-    if (dropzoneElement?.opacity) dropzoneElement.opacity = '0'
+    const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
+    if (dropzoneElement?.style?.visibility) dropzoneElement.style.visibility = 'hidden'
+    if (dropzoneElement?.style?.opacity) dropzoneElement.style.opacity = '0'
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
@@ -130,18 +130,18 @@ const FilesContainer = ({
   useEffect(() => {
     let lastTarget: EventTarget | null = null
 
-    const onEnter = (e: DragEvent) => {
+    const onEnter = function (e: DragEvent) {
       lastTarget = e.target // cache the last target here
-      const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')?.style
-      if (dropzoneElement?.visibility) dropzoneElement.visibility = 'visible'
-      if (dropzoneElement?.opacity) dropzoneElement.opacity = '1'
+      const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
+      if (dropzoneElement?.style) dropzoneElement.style.visibility = 'visible'
+      if (dropzoneElement?.style) dropzoneElement.style.opacity = '1'
     }
 
-    const onLeave = (e: DragEvent) => {
+    const onLeave = function (e: DragEvent) {
       if (e.target === lastTarget || e.target === document) {
-        const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')?.style
-        if (dropzoneElement?.visibility) dropzoneElement.visibility = 'hidden'
-        if (dropzoneElement?.opacity) dropzoneElement.opacity = '0'
+        const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
+        if (dropzoneElement?.style) dropzoneElement.style.visibility = 'hidden'
+        if (dropzoneElement?.style) dropzoneElement.style.opacity = '0'
       }
     }
 
@@ -156,7 +156,7 @@ const FilesContainer = ({
     }
 
     addDragListeners()
-    return cleanupListeners()
+    return () => cleanupListeners()
   }, [])
 
   useEffect(() => {
