@@ -27,7 +27,7 @@ export interface Props {
   /**
    * The function that gets called when a file is selected
    */
-  onSelect: (file: File) => any
+  onSelect?: (file: File) => any
   /**
    * The component that should trigger the File Picker modal on click
    */
@@ -56,7 +56,7 @@ export interface Props {
    * File to save. Forces the FilePicker to go in "Upload" mode and only
    * allows to change the file name and select the folder to upload the provided file to
    */
-  fileToSave: File
+  fileToSave?: File
 }
 
 export const EventsContext = createContext({ onSelect: undefined })
