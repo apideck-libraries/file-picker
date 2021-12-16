@@ -108,7 +108,7 @@ const FilesContainer = ({
     shouldRetryOnError: false
   })
 
-  const { uploadFile, isLoading: isUploading } = useUpload({ onSuccess: mutate })
+  const { uploadFile, isLoading: isUploading, progress } = useUpload({ onSuccess: mutate })
 
   const onDrop = async (acceptedFiles: any) => {
     await uploadFile({ file: acceptedFiles[0], folderId, appId, consumerId, serviceId, jwt })
@@ -293,7 +293,17 @@ const FilesContainer = ({
         {isDragActive || isUploading ? (
           <div className="flex justify-center px-6 py-24 mt-4 border-2 border-gray-300 border-dashed rounded-md">
             {isUploading ? (
-              <Spinner className="w-6 h-6 text-gray-500" />
+              <div className="flex flex-col items-center">
+                <Spinner className="w-6 h-6 text-gray-500" />
+                {progress !== null ? (
+                  <div className="w-full h-2 mt-4 bg-gray-200 rounded" style={{ width: 200 }}>
+                    <div
+                      className={`h-2 bg-blue-400 rounded ${progress === 100 && 'animate-ping'} `}
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                ) : null}
+              </div>
             ) : (
               <div className="space-y-1 text-center">
                 <svg

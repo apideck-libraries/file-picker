@@ -16,6 +16,7 @@ interface UploadFileProps {
 
 export const useUpload = ({ onSuccess }: Props) => {
   const [isLoading, setIsLoading] = useState(false)
+  const [progress, setProgress] = useState<number | null>(null)
   const { addToast } = useToast()
 
   const uploadFile = async ({
@@ -38,9 +39,11 @@ export const useUpload = ({ onSuccess }: Props) => {
       Authorization: `Bearer ${jwt}`
     }
     setIsLoading(true)
+    setProgress(null)
 
     // if file bigger then 4mb then use multi part upload
     if (file.size > 4000000) {
+      setProgress(5)
       await uploadLargeFile(file, headers, folderId)
       return
     }
@@ -148,6 +151,7 @@ export const useUpload = ({ onSuccess }: Props) => {
           const remainingBytes = file.size - currentChunkFinalByte
 
           if (currentChunkFinalByte === file.size) {
+            setProgress(100)
             // All chunks are uploaded. Finish the upload session.
             const result = await fetch(
               `https://unify.apideck.com/file-storage/upload-sessions/${sessionId}/finish`,
@@ -157,6 +161,7 @@ export const useUpload = ({ onSuccess }: Props) => {
               }
             )
             const finalResponse = await result.json()
+            setIsLoading(false)
             addToast({
               title: 'File uploaded',
               description: 'File successfully uploaded',
@@ -175,15 +180,15 @@ export const useUpload = ({ onSuccess }: Props) => {
             currentChunkFinalByte = currentChunkStartByte + partSize
           }
           index++
+          setProgress((index / Math.ceil(file.size / partSize)) * 100)
           uploadChunk()
         } catch (error) {
+          setIsLoading(false)
           addToast({
             title: 'Something went wrong',
             description: error as string,
             type: 'error'
           })
-        } finally {
-          setIsLoading(false)
         }
       }
 
@@ -197,5 +202,5 @@ export const useUpload = ({ onSuccess }: Props) => {
     }
   }
 
-  return { uploadFile, isLoading }
+  return { uploadFile, isLoading, progress }
 }
