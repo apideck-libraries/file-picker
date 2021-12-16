@@ -101,6 +101,8 @@ export const useUpload = ({ onSuccess }: Props) => {
       })
       const sessionResponse = await raw.json()
       const sessionId = sessionResponse.data?.id
+      if (!sessionId) return { partSize: null, sessionId: null }
+
       const rawSession = await fetch(
         `https://unify.apideck.com/file-storage/upload-sessions/${sessionId}`,
         {
@@ -144,7 +146,9 @@ export const useUpload = ({ onSuccess }: Props) => {
           }
 
           const remainingBytes = file.size - currentChunkFinalByte
+
           if (currentChunkFinalByte === file.size) {
+            // All chunks are uploaded. Finish the upload session.
             const result = await fetch(
               `https://unify.apideck.com/file-storage/upload-sessions/${sessionId}/finish`,
               {
@@ -153,20 +157,20 @@ export const useUpload = ({ onSuccess }: Props) => {
               }
             )
             const finalResponse = await result.json()
-            if (finalResponse.data) {
-              addToast({
-                title: 'File uploaded',
-                description: 'File successfully uploaded',
-                type: 'success',
-                autoClose: true
-              })
-              onSuccess(finalResponse.data)
-              return
-            }
+            addToast({
+              title: 'File uploaded',
+              description: 'File successfully uploaded',
+              type: 'success',
+              autoClose: true
+            })
+            onSuccess(finalResponse.data)
+            return
           } else if (remainingBytes < partSize) {
+            // Last chunk to upload
             currentChunkStartByte = currentChunkFinalByte
             currentChunkFinalByte = currentChunkStartByte + remainingBytes
           } else {
+            // Next chunk to upload
             currentChunkStartByte = currentChunkFinalByte
             currentChunkFinalByte = currentChunkStartByte + partSize
           }
@@ -185,7 +189,9 @@ export const useUpload = ({ onSuccess }: Props) => {
 
       console.log(`uploading ${Math.ceil(file.size / partSize)} chunks of ${partSize} bytes`)
 
-      uploadChunk()
+      if (sessionId && partSize) {
+        uploadChunk()
+      }
     } catch (error) {
       console.log('Error', error)
     }
