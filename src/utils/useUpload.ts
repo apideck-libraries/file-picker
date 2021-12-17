@@ -40,14 +40,16 @@ export const useUpload = ({ onSuccess }: Props) => {
     }
     setIsLoading(true)
     setProgress(null)
-
     // if file bigger then 4mb then use multi part upload
     if (file.size > 4000000) {
       setProgress(5)
       await uploadLargeFile(file, headers, folderId)
-      return
+    } else {
+      await uploadRegularFile(file, headers)
     }
+  }
 
+  const uploadRegularFile = async (file: File, headers: Record<string, string>) => {
     try {
       const raw = await fetch('https://unify.apideck.com/file-storage/files', {
         headers,
@@ -168,7 +170,7 @@ export const useUpload = ({ onSuccess }: Props) => {
               type: 'success',
               autoClose: true
             })
-            onSuccess(finalResponse.data)
+            onSuccess(finalResponse.data || file)
             return
           } else if (remainingBytes < partSize) {
             // Last chunk to upload
