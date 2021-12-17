@@ -113,7 +113,7 @@ export const Toast: React.FC<Props> = ({
 
   return (
     <div
-      className="flex items-end justify-center w-full px-4 pt-6 pointer-events-none top-2 right-2"
+      className="flex items-end justify-end w-full px-4 pointer-events-none top-3 right-3"
       key={id}
     >
       <Transition

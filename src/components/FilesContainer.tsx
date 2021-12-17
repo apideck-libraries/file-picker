@@ -108,13 +108,16 @@ const FilesContainer = ({
     shouldRetryOnError: false
   })
 
-  const { uploadFile, isLoading: isUploading } = useUpload({ onSuccess: mutate })
+  const { uploadFile, isLoading: isUploading, progress } = useUpload({
+    onSuccess: () => {
+      mutate()
+      hideDropzone()
+    }
+  })
 
   const onDrop = async (acceptedFiles: any) => {
     await uploadFile({ file: acceptedFiles[0], folderId, appId, consumerId, serviceId, jwt })
-    const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
-    if (dropzoneElement?.style?.visibility) dropzoneElement.style.visibility = 'hidden'
-    if (dropzoneElement?.style?.opacity) dropzoneElement.style.opacity = '0'
+    hideDropzone()
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
@@ -127,21 +130,29 @@ const FilesContainer = ({
     }
   }
 
+  const hideDropzone = () => {
+    const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
+    if (dropzoneElement?.style?.visibility) dropzoneElement.style.visibility = 'hidden'
+    if (dropzoneElement?.style?.opacity) dropzoneElement.style.opacity = '0'
+  }
+
+  const showDropzone = () => {
+    const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
+    if (dropzoneElement?.style) dropzoneElement.style.visibility = 'visible'
+    if (dropzoneElement?.style) dropzoneElement.style.opacity = '1'
+  }
+
   useEffect(() => {
     let lastTarget: EventTarget | null = null
 
     const onEnter = function (e: DragEvent) {
       lastTarget = e.target // cache the last target here
-      const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
-      if (dropzoneElement?.style) dropzoneElement.style.visibility = 'visible'
-      if (dropzoneElement?.style) dropzoneElement.style.opacity = '1'
+      showDropzone()
     }
 
     const onLeave = function (e: DragEvent) {
       if (e.target === lastTarget || e.target === document) {
-        const dropzoneElement = document.querySelector<HTMLElement>('.dropzone')
-        if (dropzoneElement?.style) dropzoneElement.style.visibility = 'hidden'
-        if (dropzoneElement?.style) dropzoneElement.style.opacity = '0'
+        hideDropzone()
       }
     }
 
@@ -293,7 +304,17 @@ const FilesContainer = ({
         {isDragActive || isUploading ? (
           <div className="flex justify-center px-6 py-24 mt-4 border-2 border-gray-300 border-dashed rounded-md">
             {isUploading ? (
-              <Spinner className="w-6 h-6 text-gray-500" />
+              <div className="flex flex-col items-center">
+                <Spinner className="w-6 h-6 text-gray-500" />
+                {progress !== null ? (
+                  <div className="w-full h-2 mt-4 bg-gray-200 rounded" style={{ width: 200 }}>
+                    <div
+                      className={`h-2 bg-blue-400 rounded ${progress === 100 && 'animate-ping'} `}
+                      style={{ width: `${progress}%` }}
+                    ></div>
+                  </div>
+                ) : null}
+              </div>
             ) : (
               <div className="space-y-1 text-center">
                 <svg

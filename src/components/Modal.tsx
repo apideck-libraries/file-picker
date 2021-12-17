@@ -44,7 +44,6 @@ export const Modal = React.forwardRef<HTMLDivElement, Props>(function Modal(prop
               rel="noopener noreferrer"
             >
               Powered by <Logo className="h-5" />
-              <span>Unify</span>
             </a>
           ) : null}
           <Transition.Child
