@@ -24,6 +24,11 @@ export interface Props {
    * The function that gets called when a file is selected
    */
   onSelect: (file: File) => any
+
+  /**
+   * The function that gets called when a connection is selected
+   */
+  onConnectionSelect: (connection: Connection) => any
   /**
    * Title shown in the modal
    */
@@ -46,6 +51,7 @@ export const ModalContent: FC<Props> = ({
   consumerId,
   jwt,
   onSelect,
+  onConnectionSelect,
   title,
   subTitle,
   fileToSave
@@ -85,6 +91,12 @@ export const ModalContent: FC<Props> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setConnection, callableConnections])
+
+  useEffect(() => {
+    if (connection) {
+      onConnectionSelect(connection)
+    }
+  }, [connection])
 
   const modalHeight = document.getElementById('modal-component')?.clientHeight
 

@@ -6,8 +6,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
-
-import { File } from '../types/File'
+import { Connection, File } from '../types'
 import { Modal } from './Modal'
 import { ModalContent } from './ModalContent'
 
@@ -28,6 +27,10 @@ export interface Props {
    * The function that gets called when a file is selected
    */
   onSelect?: (file: File) => any
+  /**
+   * The function that gets called when a connection is selected
+   */
+  onConnectionSelect?: (connection: Connection) => any
   /**
    * The component that should trigger the File Picker modal on click
    */
@@ -71,6 +74,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     jwt,
     trigger,
     onSelect,
+    onConnectionSelect,
     title,
     subTitle,
     showAttribution = true,
@@ -90,6 +94,10 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     }
     if (onSelect) onSelect(fileToReturn)
     onCloseModal()
+  }
+
+  const handleConnectionSelect = (connection: Connection) => {
+    if (onConnectionSelect) onConnectionSelect(connection)
   }
 
   const onCloseModal = () => {
@@ -114,6 +122,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
           consumerId={consumerId}
           jwt={jwt}
           onSelect={handleFileSelect}
+          onConnectionSelect={handleConnectionSelect}
           title={title ? title : fileToSave ? 'Apideck File Uploader' : 'Apideck File Picker'}
           subTitle={subTitle ? subTitle : fileToSave ? 'Select a folder' : 'Select a file'}
           fileToSave={fileToSave}
