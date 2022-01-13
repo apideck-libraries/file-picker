@@ -41,19 +41,20 @@ You can also provide a file through the `fileToSave` prop that will force the Fi
 
 ### Properties
 
-| Property        | Type    | Required | Default             | Description                                                           |
-| --------------- | ------- | -------- | ------------------- | --------------------------------------------------------------------- |
-| appId           | string  | true     | -                   | The ID of your Unify application                                      |
-| consumerId      | string  | true     | -                   | The ID of the consumer which you want to fetch files from             |
-| jwt             | string  | true     | -                   | The JSON Web Token returned from the Create Session call              |
-| onSelect        | event   | true     | -                   | The function that gets called when a file is selected                 |
-| trigger         | element | false    | -                   | The component that should trigger the File Picker modal on click      |
-| title           | string  | false    | Apideck File Picker | Title shown in the modal                                              |
-| subTitle        | string  | false    | Select a file       | Subtitle shown in the modal                                           |
-| showAttribution | boolean | false    | true                | Show "Powered by Apideck" in the backdrop of the modal backdrop       |
-| open            | boolean | false    | false               | Opens the file picker if set to true                                  |
-| onClose         | event   | false    | -                   | Function that gets called when the modal is closed                    |
-| fileToSave      | file    | false    | -                   | Forces "Upload" mode to select the folder to upload the provided file |
+| Property           | Type    | Required | Default             | Description                                                           |
+| ------------------ | ------- | -------- | ------------------- | --------------------------------------------------------------------- |
+| appId              | string  | true     | -                   | The ID of your Unify application                                      |
+| consumerId         | string  | true     | -                   | The ID of the consumer which you want to fetch files from             |
+| jwt                | string  | true     | -                   | The JSON Web Token returned from the Create Session call              |
+| onSelect           | event   | false    | -                   | The function that gets called when a file is selected                 |
+| onConnectionSelect | event   | false    | -                   | The function that gets called when a connection is selected           |
+| trigger            | element | false    | -                   | The component that should trigger the File Picker modal on click      |
+| title              | string  | false    | Apideck File Picker | Title shown in the modal                                              |
+| subTitle           | string  | false    | Select a file       | Subtitle shown in the modal                                           |
+| showAttribution    | boolean | false    | true                | Show "Powered by Apideck" in the backdrop of the modal backdrop       |
+| open               | boolean | false    | false               | Opens the file picker if set to true                                  |
+| onClose            | event   | false    | -                   | Function that gets called when the modal is closed                    |
+| fileToSave         | file    | false    | -                   | Forces "Upload" mode to select the folder to upload the provided file |
 
 ### Using Tailwind?
 
