@@ -30,7 +30,7 @@
     "react-dropzone": "^11.4.2",
     "react-table": "^7.7.0",
     "react-waypoint": "^10.1.0",
-    "swr": "^1.0.1"
+    "swr": "^1.1.2"
   },
   "husky": {
     "hooks": {}
