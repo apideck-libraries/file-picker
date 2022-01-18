@@ -48,6 +48,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
             <Menu.Button
               className="flex items-center justify-between w-full px-4 py-2 text-sm font-medium text-blue-800 bg-blue-100 border border-blue-200 rounded-md group hover:bg-cool-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cool-gray-100 focus:ring-blue-600"
               style={{ minWidth: 180 }}
+              data-testid="select-connection-button"
             >
               <div>
                 {!isLoading && connection?.icon && (
@@ -91,6 +92,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
                         {({ active }) => (
                           <div
                             onClick={() => handleClick(connection)}
+                            data-testid={`select-connection-${i}`}
                             className={`${
                               active ? 'bg-gray-100 text-gray-900' : 'text-gray-600'
                             } flex items-center justify-between min-w-0 mx-2 cursor-pointer rounded-md py-0.5 overflow-hidden ${

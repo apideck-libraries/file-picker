@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react'
+
 import { File } from '../types/File'
 import { formatBytes } from '../utils/bytesToSize'
 
@@ -12,7 +13,7 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
   if (!file) return <p className="p-4 text-center">No file found</p>
 
   return (
-    <div className="flex flex-col justify-between h-full">
+    <div className="flex flex-col justify-between h-full" data-testid="file-details">
       <dl className="grid grid-cols-2 gap-x-4 gap-y-6">
         <div className="col-span-1">
           <dt className="text-sm font-medium text-gray-500">Name</dt>
@@ -79,6 +80,7 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
           type="button"
           className="items-center w-full px-3 py-2 ml-2 text-sm font-medium leading-4 text-white bg-blue-600 border border-transparent rounded-md shadow-sm sm:ml-3 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={() => onSelect(file)}
+          data-testid="select-file-button"
         >
           Select file
         </button>

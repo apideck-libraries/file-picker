@@ -12,6 +12,7 @@ import SlideOver from './SlideOver'
 import Spinner from './Spinner'
 import UploadButton from './UploadButton'
 import { Waypoint } from 'react-waypoint'
+import fetch from 'isomorphic-unfetch'
 import { useDebounce } from '../utils/useDebounce'
 import { useDropzone } from 'react-dropzone'
 import { usePrevious } from '../utils/usePrevious'
@@ -84,7 +85,7 @@ const FilesContainer = ({
     Authorization: `Bearer ${jwt}`
   }
 
-  const fetcher = async (url: string) => {
+  const fetcher = async (url: string): Promise<any> => {
     const response = await fetch(url, { headers })
     return await response.json()
   }
@@ -108,7 +109,11 @@ const FilesContainer = ({
     shouldRetryOnError: false
   })
 
-  const { uploadFile, isLoading: isUploading, progress } = useUpload({
+  const {
+    uploadFile,
+    isLoading: isUploading,
+    progress
+  } = useUpload({
     onSuccess: () => {
       mutate()
       hideDropzone()
@@ -249,11 +254,11 @@ const FilesContainer = ({
       Promise.all(promises)
         .then((responses) => {
           const results = responses
-            ?.map((res) =>
-              res.data?.map((file: File) => {
+            ?.map((res: any) =>
+              res?.data?.map((file: File) => {
                 return {
                   ...file,
-                  connection: connections.find((con) => con.service_id === res.service)
+                  connection: connections.find((con) => con.service_id === res?.service)
                 }
               })
             )
@@ -276,7 +281,10 @@ const FilesContainer = ({
 
   return (
     <Fragment>
-      <div className="relative flex items-center justify-between mb-2">
+      <div
+        className="relative flex items-center justify-between mb-2"
+        data-testid="files-container"
+      >
         <Breadcrumbs folders={folders} handleClick={handleBreadcrumbClick} />
         <div className="flex items-center space-x-2">
           <Search
@@ -302,7 +310,10 @@ const FilesContainer = ({
       <div {...getRootProps()} className="relative">
         <input {...getInputProps()} />
         {isDragActive || isUploading ? (
-          <div className="flex justify-center px-6 py-24 mt-4 border-2 border-gray-300 border-dashed rounded-md">
+          <div
+            className="flex justify-center px-6 py-24 mt-4 border-2 border-gray-300 border-dashed rounded-md"
+            data-testid="loading"
+          >
             {isUploading ? (
               <div className="flex flex-col items-center">
                 <Spinner className="w-6 h-6 text-gray-500" />
