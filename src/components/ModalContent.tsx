@@ -144,7 +144,7 @@ export const ModalContent: FC<Props> = ({
             />
           </ToastProvider>
         ) : !callableConnections?.length && !isLoading ? (
-          <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96">
+          <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96 empty">
             <div className="text-center">
               <a
                 href={`https://vault.apideck.com/session/${jwt}`}

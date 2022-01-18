@@ -203,6 +203,7 @@ const FilesTable = ({
                     ? 'text-gray-300'
                     : 'cursor-pointer hover:bg-gray-50 text-gray-900'
                 }`}
+                data-testid={`row-${i}`}
                 onClick={() => {
                   if (!uploadingMode || row.original.type === 'folder') {
                     handleSelect(row.original)

@@ -7,7 +7,10 @@ const SaveFileForm = ({ file, folderId, appId, consumerId, serviceId, jwt, onSuc
   const { uploadFile, isLoading } = useUpload({ onSuccess })
 
   return (
-    <div className="absolute bottom-0 left-0 right-0 bg-white border-t">
+    <div
+      className="absolute bottom-0 left-0 right-0 bg-white border-t"
+      data-testid="file-to-save-form"
+    >
       <div className="flex items-center justify-center p-4">
         <input
           className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border border-gray-200 rounded shadow-sm appearance-none focus:outline-none focus:shadow-outline"
