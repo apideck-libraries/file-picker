@@ -1,5 +1,5 @@
 {
-  "version": "0.7.0",
+  "version": "0.7.1",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -36,8 +36,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint src/**/*.tsx",
-      "pre-push": "tsdx test"
+      "pre-push": "tsdx lint && tsdx test"
     }
   },
   "prettier": {
