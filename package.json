@@ -29,7 +29,7 @@
   "dependencies": {
     "@headlessui/react": "^1.4.2",
     "isomorphic-unfetch": "^3.1.0",
-    "react-dropzone": "^11.4.2",
+    "react-dropzone": "^11.5.3",
     "react-table": "^7.7.0",
     "react-waypoint": "^10.1.0",
     "swr": "^1.0.1"
