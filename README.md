@@ -29,9 +29,7 @@ const MyComponent = () => {
     <FilePicker
       onSelect={handleSelect}
       trigger={<button>Pick a file</button>}
-      jwt="token-123"
-      appId="your-app-id"
-      consumerId="your-consumer-id"
+      token="<session-token>"
     />
   )
 }
@@ -43,9 +41,7 @@ You can also provide a file through the `fileToSave` prop that will force the Fi
 
 | Property           | Type    | Required | Default             | Description                                                           |
 | ------------------ | ------- | -------- | ------------------- | --------------------------------------------------------------------- |
-| appId              | string  | true     | -                   | The ID of your Unify application                                      |
-| consumerId         | string  | true     | -                   | The ID of the consumer which you want to fetch files from             |
-| jwt                | string  | true     | -                   | The JSON Web Token returned from the Create Session call              |
+| token              | string  | true     | -                   | The JSON Web Token returned from the Create Session call              |
 | onSelect           | event   | false    | -                   | The function that gets called when a file is selected                 |
 | onConnectionSelect | event   | false    | -                   | The function that gets called when a connection is selected           |
 | trigger            | element | false    | -                   | The component that should trigger the File Picker modal on click      |
