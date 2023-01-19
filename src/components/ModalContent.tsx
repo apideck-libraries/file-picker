@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from 'react'
 
+import { ApideckVault } from '@apideck/vault-js'
+import useSWR from 'swr'
 import { Connection } from '../types/Connection'
 import { File } from '../types/File'
+import { ToastProvider } from '../utils/useToast'
 import FilesContainer from './FilesContainer'
 import SelectConnection from './SelectConnection'
-import { ToastProvider } from '../utils/useToast'
-import useSWR from 'swr'
 
 export interface Props {
   /**
@@ -57,6 +58,7 @@ export const ModalContent: FC<Props> = ({
   fileToSave
 }) => {
   const [connection, setConnection] = useState<Connection>()
+  const [isLoadingVault, setIsLoadingVault] = useState(false)
 
   const getConnections = async (url: string) => {
     const response = await fetch(url, {
@@ -71,7 +73,7 @@ export const ModalContent: FC<Props> = ({
     return await response.json()
   }
 
-  const { data, error } = useSWR(
+  const { data, error, mutate } = useSWR(
     `https://unify.apideck.com/vault/connections?api=file-storage`,
     getConnections,
     {
@@ -120,6 +122,7 @@ export const ModalContent: FC<Props> = ({
           connections={connections}
           connection={connection}
           setConnection={setConnection}
+          mutate={mutate}
           isLoading={isLoading}
         />
       </div>
@@ -146,15 +149,29 @@ export const ModalContent: FC<Props> = ({
         ) : !callableConnections?.length && !isLoading ? (
           <div className="flex items-center justify-center border-2 border-gray-200 border-dashed rounded-lg h-96 empty">
             <div className="text-center">
-              <a
-                href={`https://vault.apideck.com/session/${jwt}`}
-                target="_blank"
-                rel="noreferrer"
-                className="text-indigo-600 hover:text-indigo-900"
-              >
-                Go to vault
-              </a>{' '}
-              to add file storage connectors
+              {hasError === 'Unauthorized' ? (
+                <p className="text-gray-700 text-sm">Your session is invalid</p>
+              ) : (
+                <>
+                  <button
+                    className={`text-indigo-600 hover:text-indigo-900 ${
+                      isLoadingVault && 'animate-pulse'
+                    }`}
+                    onClick={() => {
+                      setIsLoadingVault(true)
+                      ApideckVault.open({
+                        token: jwt,
+                        unifiedApi: 'file-storage',
+                        onReady: () => setIsLoadingVault(false),
+                        onClose: () => mutate()
+                      })
+                    }}
+                  >
+                    {isLoadingVault ? 'Loading...' : 'Open Vault'}
+                  </button>{' '}
+                  to add file storage connectors
+                </>
+              )}
             </div>
           </div>
         ) : null}

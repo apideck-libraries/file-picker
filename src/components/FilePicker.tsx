@@ -1,3 +1,4 @@
+import jwtDecode from 'jwt-decode'
 import React, {
   Fragment,
   ReactElement,
@@ -12,17 +13,9 @@ import { ModalContent } from './ModalContent'
 
 export interface Props {
   /**
-   * The ID of your Unify application
-   */
-  appId: string
-  /**
-   * The ID of the consumer which you want to fetch files from
-   */
-  consumerId: string
-  /**
    * The JSON Web Token returned from the Create Session call
    */
-  jwt: string
+  token: string
   /**
    * The function that gets called when a file is selected
    */
@@ -64,14 +57,16 @@ export interface Props {
 
 export const EventsContext = createContext({ onSelect: undefined })
 
+const SESSION_MESSAGE = `Make sure you first create a session and then provide the returned token to the component. https://developers.apideck.com/apis/vault/reference#operation/sessionsCreate`
+const INVALID_TOKEN_MESSAGE = `Invalid token provided to React Vault. ${SESSION_MESSAGE}`
+const NO_TOKEN_MESSAGE = `No token provided to React Vault. ${SESSION_MESSAGE}`
+
 /**
  * The Apideck File Picker component
  */
 export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
   {
-    appId,
-    consumerId,
-    jwt,
+    token,
     trigger,
     onSelect,
     onConnectionSelect,
@@ -85,6 +80,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
   ref
 ) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [decodedToken, setDecodedToken] = useState<any>(null)
 
   const handleFileSelect = (file: File) => {
     let fileToReturn = file
@@ -113,14 +109,30 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
     }
   }, [open])
 
+  useEffect(() => {
+    if (token?.length) {
+      let decoded
+
+      try {
+        decoded = jwtDecode<{ application_id: string; consumer_id: string }>(token)
+        console.log(decoded)
+        setDecodedToken(decoded)
+      } catch (e) {
+        console.error(e)
+        console.error(INVALID_TOKEN_MESSAGE)
+        setDecodedToken(null)
+      }
+    }
+  }, [token])
+
   return (
     <Fragment>
       {trigger ? React.cloneElement(trigger, { onClick: () => setIsOpen(true), ref }) : null}
       <Modal isOpen={isOpen} onClose={() => onCloseModal()} showAttribution={showAttribution}>
         <ModalContent
-          appId={appId}
-          consumerId={consumerId}
-          jwt={jwt}
+          appId={decodedToken?.application_id}
+          consumerId={decodedToken?.consumer_id}
+          jwt={token}
           onSelect={handleFileSelect}
           onConnectionSelect={handleConnectionSelect}
           title={title ? title : fileToSave ? 'Apideck File Uploader' : 'Apideck File Picker'}

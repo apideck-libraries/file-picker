@@ -1,3 +1,4 @@
+import { ApideckVault } from '@apideck/vault-js'
 import { Menu, Transition } from '@headlessui/react'
 import React, { Dispatch, SetStateAction } from 'react'
 import { Connection } from '../types/Connection'
@@ -9,12 +10,27 @@ interface Props {
   connections?: Connection[]
   setConnection: Dispatch<SetStateAction<Connection | undefined>>
   isLoading: boolean
+  mutate: any
 }
 
-const SelectConnection = ({ jwt, connections, connection, setConnection, isLoading }: Props) => {
-  const redirectToVault = () => {
-    const redirectUrl = `https://vault.apideck.com/session/${jwt}`
-    window.location.href = redirectUrl
+const SelectConnection = ({
+  jwt,
+  connections,
+  connection,
+  setConnection,
+  isLoading,
+  mutate
+}: Props) => {
+  const [isLoadingVault, setIsLoadingVault] = React.useState(false)
+
+  const openToVault = () => {
+    setIsLoadingVault(true)
+    ApideckVault.open({
+      token: jwt,
+      unifiedApi: 'file-storage',
+      onReady: () => setIsLoadingVault(false),
+      onClose: () => mutate()
+    })
   }
 
   const statusColor = (connection: Connection) => {
@@ -28,16 +44,14 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
       setConnection(connection)
       return
     }
-    if (connection.state === 'available') {
-      // Enable integration in vault
-      const redirectUrl = `https://vault.apideck.com/integrations/file-storage/${connection?.service_id}/enable?jwt=${jwt}`
-      window.location.href = redirectUrl
-      return
-    }
-
-    // Redirect to integration settings page
-    const redirectUrl = `https://vault.apideck.com/integrations/file-storage/${connection?.service_id}?jwt=${jwt}`
-    window.location.href = redirectUrl
+    setIsLoadingVault(true)
+    ApideckVault.open({
+      token: jwt,
+      unifiedApi: 'file-storage',
+      serviceId: connection.service_id,
+      onReady: () => setIsLoadingVault(false),
+      onClose: () => mutate()
+    })
   }
 
   return (
@@ -51,7 +65,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
               data-testid="select-connection-button"
             >
               <div>
-                {!isLoading && connection?.icon && (
+                {!isLoading && !isLoadingVault && connection?.icon && (
                   <img
                     className={`inline-block w-6 h-6 mr-2 rounded-full ${
                       isLoading ? 'animate-spin opacity-20' : ''
@@ -60,8 +74,10 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
                     alt=""
                   />
                 )}
-                {isLoading && <Spinner className="w-6 h-6" />}
-                {!isLoading && <span>{connection?.name || 'No integrations'}</span>}
+                {(isLoading || isLoadingVault) && <Spinner className="w-5 h-5" />}
+                {!isLoading && !isLoadingVault && (
+                  <span>{connection?.name || 'No integrations'}</span>
+                )}
               </div>
               <svg className="w-5 h-5 ml-2 -mr-1" viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -123,7 +139,7 @@ const SelectConnection = ({ jwt, connections, connection, setConnection, isLoadi
                   <Menu.Item>
                     {({ active }) => (
                       <div
-                        onClick={() => redirectToVault()}
+                        onClick={() => openToVault()}
                         className={`${
                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-600'
                         } flex items-center justify-between min-w-0 mx-2 cursor-pointer rounded-md py-0.5 overflow-hidden`}
