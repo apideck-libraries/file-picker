@@ -1,5 +1,5 @@
-import { FilePicker, Props } from '../src/components/FilePicker'
 import { Meta, Story } from '@storybook/react'
+import { FilePicker, Props } from '../src/components/FilePicker'
 
 import React from 'react'
 
@@ -21,16 +21,14 @@ const meta: Meta = {
 export default meta
 
 // First create a vault session to get a JSON Web Token
-const jwt = 'xxxxxx'
+const jwt = 'xxxx'
 
 const Template: Story<Props> = (args) => (
   <FilePicker
     trigger={<button className="p-2 border rounded shadow">Pick a file</button>}
-    appId={process.env.STORYBOOK_APP_ID}
-    consumerId={process.env.STORYBOOK_CONSUMER_ID}
-    jwt={jwt}
     onSelect={(file) => console.log(file)}
     {...args}
+    token={jwt}
   />
 )
 

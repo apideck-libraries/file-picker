@@ -106,6 +106,7 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
   useEffect(() => {
     if (open) {
       setIsOpen(true)
+      if (!token) console.error(NO_TOKEN_MESSAGE)
     }
   }, [open])
 
@@ -118,7 +119,6 @@ export const FilePicker = forwardRef<HTMLElement, Props>(function FilePicker(
         console.log(decoded)
         setDecodedToken(decoded)
       } catch (e) {
-        console.error(e)
         console.error(INVALID_TOKEN_MESSAGE)
         setDecodedToken(null)
       }

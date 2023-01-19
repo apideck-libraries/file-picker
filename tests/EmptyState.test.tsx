@@ -2,13 +2,11 @@ import '@testing-library/jest-dom/extend-expect'
 
 import * as React from 'react'
 
-import { FilePicker } from '../src/components/FilePicker'
-import { act } from 'react-dom/test-utils'
 import { render } from '@testing-library/react'
+import { act } from 'react-dom/test-utils'
+import { FilePicker } from '../src/components/FilePicker'
 
-const jwt = 'xxx'
-const appId = 'xxx'
-const consumerId = 'xxx'
+const token = 'xxx'
 
 async function mockFetch() {
   return {
@@ -26,14 +24,7 @@ describe('FilePicker - Empty state', () => {
     let screen: any
     await act(async () => {
       screen = render(
-        <FilePicker
-          appId={appId}
-          consumerId={consumerId}
-          jwt={jwt}
-          title="Custom Title"
-          open
-          showAttribution={false}
-        />
+        <FilePicker token={token} title="Custom Title" open showAttribution={false} />
       )
     })
     expect(screen.getByText('Custom Title')).toBeInTheDocument()
@@ -42,9 +33,7 @@ describe('FilePicker - Empty state', () => {
   it('should render the FilePicker without connectors', async () => {
     let screen: any
     await act(async () => {
-      screen = render(
-        <FilePicker appId={appId} consumerId={consumerId} jwt={jwt} open showAttribution={false} />
-      )
+      screen = render(<FilePicker token={token} open showAttribution={false} />)
     })
 
     expect(screen.getByText('No integrations')).toBeInTheDocument()

@@ -1,6 +1,6 @@
-import { FilePicker, Props } from '../src/components/FilePicker'
 import { Meta, Story } from '@storybook/react'
 import React, { useState } from 'react'
+import { FilePicker, Props } from '../src/components/FilePicker'
 
 const meta: Meta = {
   title: 'FileSaver',
@@ -43,12 +43,10 @@ const Template: Story<Props> = (args) => {
       {file ? (
         <FilePicker
           trigger={<button className="flex p-2 border rounded shadow">Upload</button>}
-          appId={process.env.STORYBOOK_APP_ID}
-          consumerId={process.env.STORYBOOK_CONSUMER_ID}
-          jwt={jwt}
           onSelect={(file) => console.log(file)}
           fileToSave={file}
           {...args}
+          token={jwt}
         />
       ) : null}
     </div>
