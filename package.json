@@ -37,7 +37,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "tsdx lint && tsdx test"
+      "pre-push": "yarn lint && yarn test"
     }
   },
   "prettier": {
@@ -85,7 +85,7 @@
     "@types/react-table": "^7.7.2",
     "autoprefixer": "^10.3.4",
     "babel-loader": "^8.2.2",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-prettier": "^3.3.1",
     "husky": "4.3.8",
     "jest-location-mock": "^1.0.9",
     "postcss": "^8.3.6",
