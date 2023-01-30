@@ -27,7 +27,7 @@
     "react-dom": ">=16"
   },
   "dependencies": {
-    "@apideck/vault-js": "^1.0.1",
+    "@apideck/vault-js": "^1.1.2",
     "@headlessui/react": "^1.4.2",
     "isomorphic-unfetch": "^3.1.0",
     "react-dropzone": "^11.4.2",

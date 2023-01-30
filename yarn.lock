@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@apideck/vault-js@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@apideck/vault-js/-/vault-js-1.0.1.tgz#91392e8c497b704917b2685c2c7c9088ef0927aa"
-  integrity sha512-yGRwPnMznq81uPBZ6yC7CQ3I8qSnVI9k1ujn3xLlsg3YVabPqu+SzhSmk5rmIxVIVGCBMyNVuJgNlatsHAnHQw==
+"@apideck/vault-js@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@apideck/vault-js/-/vault-js-1.1.2.tgz#11b5c391f3e7658ff0840c9c612a610dcbb22e5f"
+  integrity sha512-6mKrtfwHgn0PJwyQMdlztiQ9+BEeYYRI5ZlgmQ+PGUVMM+l8PYvQ+mhoUZfgjHsx/PtGBHd32us1QyXtVr2JTg==
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4", "@babel/code-frame@^7.16.7", "@babel/code-frame@^7.5.5", "@babel/code-frame@^7.8.3":
   version "7.16.7"
