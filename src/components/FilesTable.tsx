@@ -1,10 +1,10 @@
 import { useSortBy, useTable } from 'react-table'
 
-import { Connection } from '..'
-import { LoadingRow } from './LoadingTable'
-import React from 'react'
 import { Transition } from '@headlessui/react'
+import React from 'react'
+import { Connection } from '..'
 import { formatBytes } from '../utils/bytesToSize'
+import { LoadingRow } from './LoadingTable'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 interface IProps {
@@ -118,7 +118,7 @@ const FilesTable = ({
 
   return (
     <div className="overflow-auto">
-      <table className="min-w-full divide-y divide-gray-200">
+      <table className="w-full divide-y divide-gray-200">
         <thead className="">
           {headerGroups.map((headerGroup: any, i: number) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={`headerGroup${i}`}>
@@ -233,7 +233,7 @@ const FilesTable = ({
         </tbody>
       </table>
       {isLoadingMore ? (
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="w-full divide-y divide-gray-200">
           <tbody className="bg-white divide-y divide-gray-200">
             {Array.from(Array(12).keys()).map((key) => (
               <LoadingRow key={key} columns={columns} />

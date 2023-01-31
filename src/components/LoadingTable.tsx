@@ -23,7 +23,7 @@ export const LoadingTable = ({ isSearching }: Props) => {
 
   return (
     <div className="overflow-auto">
-      <table className="min-w-full divide-y divide-gray-200">
+      <table className="w-full divide-y divide-gray-200">
         <thead>
           <tr>
             {columns.map((column: any, i: number) => (
