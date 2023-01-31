@@ -27,7 +27,7 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
         </div>
         <div className="col-span-1">
           <dt className="text-sm font-medium text-gray-500">Mime type</dt>
-          <dd className="mt-1 text-sm text-gray-900">{file?.mime_type}</dd>
+          <dd className="mt-1 text-sm text-gray-900">{file?.mime_type || '-'}</dd>
         </div>
         <div className="col-span-1">
           <dt className="text-sm font-medium text-gray-500">Downloadable</dt>
@@ -38,7 +38,7 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
           <dd className="mt-1 text-sm text-gray-900">
             <div>
               <span className="mr-2 text-gray-900">
-                {file?.created_at && new Date(file.created_at).toLocaleDateString()}
+                {(file?.created_at && new Date(file.created_at).toLocaleDateString()) || '-'}
               </span>
               <span className="text-gray-500 ">
                 {file?.created_at && new Date(file.created_at).toLocaleTimeString()}
@@ -51,7 +51,7 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
           <dd className="mt-1 text-sm text-gray-900">
             <div>
               <span className="mr-2 text-gray-900">
-                {file?.updated_at && new Date(file.updated_at).toLocaleDateString()}
+                {(file?.updated_at && new Date(file.updated_at).toLocaleDateString()) || '-'}
               </span>
               <span className="text-gray-500 ">
                 {file?.updated_at && new Date(file.updated_at).toLocaleTimeString()}
@@ -61,11 +61,11 @@ const FileDetails = ({ file, setFile, onSelect }: Props) => {
         </div>
         <div className="col-span-1">
           <dt className="text-sm font-medium text-gray-500">Owner</dt>
-          <dd className="mt-1 text-sm text-gray-900">{file?.owner?.name}</dd>
+          <dd className="mt-1 text-sm text-gray-900">{file?.owner?.name || '-'}</dd>
         </div>
         <div className="col-span-1">
           <dt className="text-sm font-medium text-gray-500">Email</dt>
-          <dd className="mt-1 text-sm text-gray-900">{file?.owner?.email}</dd>
+          <dd className="mt-1 text-sm text-gray-900">{file?.owner?.email || '-'}</dd>
         </div>
       </dl>
       <div className="flex justify-between pt-6">
