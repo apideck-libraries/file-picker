@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@apideck/vault-js": "^1.1.2",
-    "@headlessui/react": "^1.4.2",
+    "@headlessui/react": "^1.7.8",
     "isomorphic-unfetch": "^3.1.0",
     "react-dropzone": "^11.4.2",
     "react-table": "^7.7.0",
