@@ -4,6 +4,10 @@ A React file picker component that works with the Apideck [File Storage API](htt
 
 Sign up for a free account at [apideck.com](https://app.apideck.com/signup) to obtain an API key and App ID.
 
+<img src="./screenshot.png" width="100%" />
+
+[FilePicker JS](https://github.com/apideck-libraries/file-picker-js) | **React FilePicker** | [Vue FilePicker](https://github.com/apideck-libraries/vue-file-picker)
+
 ## Usage
 
 Install the component
